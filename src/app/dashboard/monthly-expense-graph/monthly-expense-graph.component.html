@@ -1,0 +1,11 @@
+<div>
+    <div>
+      <h2 style="color: darkblue;" *ngIf="this.isNoData">No Data</h2>
+    </div>
+    <canvas *ngIf="!this.isNoData" baseChart
+    [data]="graphData"
+    [labels]="columnLabels"
+    [chartType]="chartType"
+    [options]="chartOptions"
+    [legend]="chartLegend"></canvas>
+</div>

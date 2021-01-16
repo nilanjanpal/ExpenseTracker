@@ -1,0 +1,22 @@
+<div (window:resize)="onResize($event)" fxLayout="column" fxFlexFill>
+    <app-header (toggleSideBar)="onToggle()"></app-header>
+    <section style="flex: 1; display: block;">
+        <mat-sidenav-container>
+            <mat-sidenav #sidenav [mode]="this.sidenavMode" *ngIf="isAuthenticated$ | async" role="navigation">
+                <app-sidebar (sidenavClickEvent)="onToggle()" (sidenavLoadEvent)="onSideNavLoad()"></app-sidebar>
+            </mat-sidenav>
+            <mat-sidenav-content>
+                <router-outlet></router-outlet>
+            </mat-sidenav-content>
+        </mat-sidenav-container>
+    </section>
+    <mat-toolbar color='primary' class="position">
+      <button mat-button>
+        <mat-icon>copyright</mat-icon>
+        <span>Angular Apps 2020</span>
+    </button>
+    <div fxFlex fxLayout fxLayoutAlign="flex-end" *ngIf="(this.isAuthenticated$ | async)">
+      <button mat-button (click)="onClick()">Feedback Form</button>
+    </div>
+    </mat-toolbar>
+</div>

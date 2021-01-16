@@ -1,0 +1,11 @@
+<mat-tab-group animationDuration="0" [(selectedIndex)]="selectedIndex">
+    <mat-tab label="Expense History">
+        <app-expense-history></app-expense-history>
+    </mat-tab>
+    <mat-tab label="Add New Expense" *ngIf="!(isEditMode$ | async)">
+        <app-new-expense></app-new-expense>
+    </mat-tab>
+    <mat-tab label="Edit Expense" *ngIf="(isEditMode$ | async)">
+        <app-edit-expense></app-edit-expense>
+    </mat-tab>
+</mat-tab-group>
