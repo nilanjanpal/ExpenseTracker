@@ -345,9 +345,6 @@ Apache-2.0
 @ngrx/store
 MIT
 
-angular-google-charts
-MIT
-
 chart.js
 MIT
 The MIT License (MIT)

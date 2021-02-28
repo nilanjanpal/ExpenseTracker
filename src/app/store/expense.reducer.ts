@@ -1,5 +1,4 @@
 import * as expActions from './expense.action';
-import { ExpenseHistoryComponent } from '../expense/expense-history/expense-history.component';
 
 export interface Category {
     Name: string;

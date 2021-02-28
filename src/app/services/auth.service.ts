@@ -72,24 +72,8 @@ export class AuthService {
     }
 
     logout(): void {
-
         for (const subscription of this.expenseService.subscription) {
           subscription.unsubscribe();
-        }
-        for (const subscription of this.dashboardService.subscription) {
-          subscription.unsubscribe();
-        }
-        for (const subscription of this.dashboardService.allExpenseSubscription) {
-          subscription.unsubscribe();
-        }
-        for (const subscription of this.dashboardService.monthlyExpenseSubscription) {
-          subscription.unsubscribe();
-        }
-        for (const subscription of this.dashboardService.sixMonthCategorySubscription) {
-          subscription.unsubscribe();
-        }
-        if (this.dashboardService.sixMonthSubscription){
-            this.dashboardService.sixMonthSubscription.unsubscribe();
         }
         if (this.subscription !== undefined){
           this.subscription.unsubscribe();

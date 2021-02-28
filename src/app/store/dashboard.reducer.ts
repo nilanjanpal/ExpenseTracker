@@ -1,45 +1,29 @@
-import { ExpenseHistory } from './expense.reducer';
 import * as dashboardActions from './dashboard.action';
+import { ExpenseHistory } from './expense.reducer';
 
 export interface ExpenseSummary {
     category: string;
     price: number;
 }
 
-export interface SixMonthSummary {
-    month: string;
-    price: number;
-}
-
-export interface SixMonthCategorySummary{
-    category: string;
-    expense: ExpenseSummary[];
-}
-
-
 export interface DashboardState {
-    allExpenses: ExpenseHistory[];
     monthlyExpenses: ExpenseSummary[];
     isMonthlyGraphLoading: boolean;
     isYearlyGraphLoading: boolean;
     isSixMonthGraphLoading: boolean;
+    sixMonthExpenseHistory: ExpenseHistory[];
 }
 
 const initialState: DashboardState = {
-    allExpenses: [],
     monthlyExpenses: [],
     isMonthlyGraphLoading: false,
     isYearlyGraphLoading: false,
-    isSixMonthGraphLoading: false
+    isSixMonthGraphLoading: false,
+    sixMonthExpenseHistory: []
 }
 
 export function DashboardReducer(state = initialState, action: dashboardActions.DashboardActions) {
     switch(action.type){
-        case dashboardActions.GET_ALL_EXPENSES:
-            return {
-                ... state,
-                allExpenses: [...action.payload]
-            };
         case dashboardActions.SET_MONTHLY_EXPENSES:
             return {
                 ... state,
@@ -74,6 +58,11 @@ export function DashboardReducer(state = initialState, action: dashboardActions.
             return {
                 ... state,
                 isSixMonthGraphLoading: false
+            }
+        case dashboardActions.SET_SIX_MONTH_EXPENSE_HISTORY:
+            return {
+                ... state,
+                sixMonthExpenseHistory: [...action.payload]
             }
         default:
             return state;

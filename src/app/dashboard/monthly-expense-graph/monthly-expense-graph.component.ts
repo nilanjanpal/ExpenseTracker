@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DashboardState } from 'src/app/store/dashboard.reducer';
 import { Store } from '@ngrx/store';
 import { ChartType, ChartOptions } from 'chart.js';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 
 @Component({
@@ -11,9 +13,12 @@ import { ChartType, ChartOptions } from 'chart.js';
 })
 export class MonthlyExpenseGraphComponent implements OnInit {
 
-  @Input() graphData: number[];
-  @Input() columnLabels: string[];
-  @Input() legendPosition: string;
+  graphData: number[] = [];
+  columnLabels: string[] = [];
+  @Input() monthlyExpenseDetail$: Observable<{categories: string[],
+                                             monthlyCategoryExpense: number[],
+                                             totalMonthlyExpense: number}>;
+  // @Input() legendPosition: string;
   isNoData = false;
   chartType: ChartType = 'doughnut';
   chartLegend = true;
@@ -31,6 +36,17 @@ export class MonthlyExpenseGraphComponent implements OnInit {
     if (this.graphData.length === 0) {
       this.isNoData = true;
     }
+    this.monthlyExpenseDetail$
+    .pipe(take(1))
+    .subscribe(
+      (data) => {
+        this.graphData = [... data.monthlyCategoryExpense];
+        this.columnLabels = [... data.categories];
+        if (this.graphData.length != 0) {
+          this.isNoData = false;
+        }
+      }
+    );
    }
 
 }

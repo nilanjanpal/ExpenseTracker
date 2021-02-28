@@ -18,8 +18,8 @@ export const getEditElement = createSelector(getExpenseState, state => state.edi
 export const getExpenseLoading = createSelector(getExpenseState, state => state.isExpenseLoading);
 
 export const getDashboardState = createFeatureSelector<DashboardState>('dashboard');
-export const getAllExpenses = createSelector(getDashboardState, state => state.allExpenses);
 export const getMonthlyExpenses = createSelector(getDashboardState, state => state.monthlyExpenses);
 export const getMonthlyGraphLoadingStatus = createSelector(getDashboardState, state => state.isMonthlyGraphLoading);
 export const getYearlyGraphLoadingStatus = createSelector(getDashboardState, state => state.isYearlyGraphLoading);
 export const getSixMonthGraphLoadingStatus = createSelector(getDashboardState, state => state.isSixMonthGraphLoading);
+export const getSixMonthExpenseHistory = createSelector(getDashboardState, state => state.sixMonthExpenseHistory);

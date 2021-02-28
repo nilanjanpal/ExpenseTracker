@@ -11,7 +11,7 @@
         <mat-card-content class="dashboard-card-content">
           <h3 style="color: darkblue;">Last Six Month Expenses</h3>
           <div>
-            <app-yearly-expense-graph [lineChartLabels]="lastSixMonthChartColumnLabels" [chartData]="lastSixMonthChartData"></app-yearly-expense-graph>
+            <app-yearly-expense-graph [chartData$]="lastSixMonthExpenseDetail$"></app-yearly-expense-graph>
           </div>
         </mat-card-content>
       </mat-card>
@@ -21,7 +21,8 @@
         <mat-card-title></mat-card-title>
         <mat-card-content class="dashboard-card-content">
           <div fxLayout="column" fxLayoutAlign="center center">
-            <h1 style="color:white; font-weight: bold;">{{lastSixMonthTotalExpense | currency:'INR'}}</h1>
+            <h1 style="color:white; font-weight: bold;">{{(lastSixMonthExpenseDetail$ | async)?.sixMonthTotalExpense |
+              currency:'INR'}}</h1>
             <h3 style="color: white">Last six month expenses</h3>
           </div>
         </mat-card-content>
@@ -32,11 +33,18 @@
         <mat-card-title></mat-card-title>
         <mat-card-content class="dashboard-card-content">
           <div fxLayout="column" fxLayoutAlign="center center">
-            <h1 style="color:white; font-weight: bold;">{{currentMonthTotalExpense | currency:'INR'}}</h1>
+            <h1 style="color:white; font-weight: bold;">{{(currentMonthExpenseDetail$ | async)?.totalMonthlyExpense |
+              currency:'INR'}}</h1>
             <div fxLayout>
-              <mat-icon color="warn" *ngIf="currentMonthTotalExpense !== 0 && this.percentageChange > 0">arrow_upward</mat-icon>
-              <mat-icon style="color:white" *ngIf="currentMonthTotalExpense !== 0 && this.percentageChange < 0">arrow_downward</mat-icon>
-              <h3 style="color:white" *ngIf="currentMonthTotalExpense !== 0">{{ percentageChange | number }}%</h3>
+              <mat-icon color="warn"
+                *ngIf="(currentMonthExpenseDetail$ | async)?.totalMonthlyExpense !== 0 && ((currentMonthExpenseDetail$ | async)?.totalMonthlyExpense > (previousMonthTotalExpense$ | async))">
+                arrow_upward</mat-icon>
+              <mat-icon style="color:white"
+                *ngIf="(currentMonthExpenseDetail$ | async)?.totalMonthlyExpense !== 0 && ((currentMonthExpenseDetail$ | async)?.totalMonthlyExpense < (previousMonthTotalExpense$ | async))">
+                arrow_downward</mat-icon>
+              <h3 style="color:white" *ngIf="(currentMonthExpenseDetail$ | async)?.totalMonthlyExpense !== 0">{{
+                (((currentMonthExpenseDetail$ | async)?.totalMonthlyExpense - (previousMonthTotalExpense$ | async))/
+                (previousMonthTotalExpense$ | async)) * 100 | number }}%</h3>
             </div>
             <h3 style="color: white">Last month expense</h3>
           </div>
@@ -53,7 +61,7 @@
         <mat-card-content class="dashboard-card-content">
           <h3 style="color: darkblue;">Current Month Expense</h3>
           <div>
-            <app-monthly-expense-graph [graphData]="monthlySummaryChartData" [columnLabels]="monthlySummaryChartColumnLabels"></app-monthly-expense-graph>
+            <app-monthly-expense-graph [monthlyExpenseDetail$]="currentMonthExpenseDetail$"></app-monthly-expense-graph>
           </div>
         </mat-card-content>
       </mat-card>
@@ -63,12 +71,19 @@
         <h4 style="color: darkblue;">Loading ...</h4>
       </section>
       <mat-card class="dashboard-card mat-elevation-z4" *ngIf="!(this.sixMonthGraphLoadingStatus$ | async)">
-        <mat-card-header>
-        </mat-card-header>
         <mat-card-content class="dashboard-card-content">
-          <h4 style="color: darkblue; padding: 0px; margin: 0px;">Top five expenses in last six months</h4>
+          <div fxLayout>
+            <h4 style="color: darkblue; padding: 0px; margin: 0px;">Last Six Month</h4>
+            <div fxFlex fxLayout fxLayoutAlign="flex-end">
+              <label style="color: darkblue; margin-right: 15px;">Category</label>
+              <select name="category" id="category" (change)="onChange($event.target.value)">
+                <option [value]=category *ngFor="let category of (categories$ | async)">{{category}}</option>
+              </select>
+            </div>
+          </div>
           <div>
-            <app-yearly-expense-category-graph [sixMonthSummary]="sixMonthSummary" [barChartLabels]="lastSixMonthChartColumnLabels" ></app-yearly-expense-category-graph>
+            <app-yearly-expense-category-graph [sixMonthCategorySummary$]="lastSixMonthExpenseDetail$">
+            </app-yearly-expense-category-graph>
           </div>
         </mat-card-content>
       </mat-card>

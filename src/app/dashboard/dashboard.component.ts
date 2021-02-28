@@ -7,8 +7,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { DashboardService } from '../services/dashboard.service';
 import { ExpenseService } from '../services/expense.service';
-import { DashboardState, ExpenseSummary, SixMonthSummary, SixMonthCategorySummary } from '../store/dashboard.reducer';
-import { ExpenseState } from '../store/expense.reducer';
+import { DashboardState, ExpenseSummary } from '../store/dashboard.reducer';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,17 +16,18 @@ import { ExpenseState } from '../store/expense.reducer';
 })
 export class DashboardComponent implements OnInit {
 
-  monthlySummaryChartData: number[] = [];
-  monthlySummaryChartColumnLabels: string[] = [];
-  lastSixMonthChartData: number[] = [];
-  lastSixMonthChartColumnLabels: string[] = [];
   monthlyGraphLoadingStatus$: Observable<boolean>;
   yearlyGraphLoadingStatus$: Observable<boolean>;
   sixMonthGraphLoadingStatus$: Observable<boolean>;
-  lastSixMonthTotalExpense = 0;
-  currentMonthTotalExpense = 0;
-  percentageChange = 0;
-  sixMonthSummary: SixMonthCategorySummary[] = [];
+  lastSixMonthExpenseDetail$: Observable<{sixMonthExpenseSummary: number[], 
+                                          categorySummary: number[],
+                                          sixMonthTotalExpense: number}>;
+  previousMonthTotalExpense$: Observable<number>;
+  currentMonthExpenseDetail$: Observable<{categories: string[],
+                                          monthlyCategoryExpense: number[],
+                                          totalMonthlyExpense: number}>;
+  categories$: Observable<string[]>;
+  categorySummary$: Observable<number[]>;
 
   /** Based on the screen size, switch from standard to one column per row */
   cardLayout = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -45,7 +45,8 @@ export class DashboardComponent implements OnInit {
           gridCol: 4,
           smallCard: {row: 1, col: 1},
           wideCard: {row: 2, col: 2},
-          rowheight: '200px'
+          medCard: {row: 1.5, col: 1.5},
+          rowheight: '180px'
         };
       }
     })
@@ -54,8 +55,7 @@ export class DashboardComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver,
               private dashboardService: DashboardService,
               private expenseService: ExpenseService,
-              private store: Store<DashboardState>,
-              private expenseStore: Store<ExpenseState>) {}
+              private store: Store<DashboardState>) {}
 
   ngOnInit(): void {
     this.store.dispatch(new dashboardActions.StartMonthlyGraphLoading);
@@ -64,58 +64,13 @@ export class DashboardComponent implements OnInit {
     this.monthlyGraphLoadingStatus$ = this.store.select(appReducer.getMonthlyGraphLoadingStatus);
     this.yearlyGraphLoadingStatus$ = this.store.select(appReducer.getYearlyGraphLoadingStatus);
     this.sixMonthGraphLoadingStatus$ = this.store.select(appReducer.getSixMonthGraphLoadingStatus);
-    this.dashboardService.getAllExpenses().then(
-      () => {
-        this.expenseService.getCategories().then(
-          () => {
-              this.dashboardService.getCurrentMonthExpenses().then(
-              (monthlyExpenses: ExpenseSummary[]) => {
-                this.currentMonthTotalExpense = 0;
-                monthlyExpenses.map(
-                  expense => {
-                    if (expense.price > 0){
-                      this.monthlySummaryChartColumnLabels.push(expense.category);
-                      this.monthlySummaryChartData.push(expense.price);
-                      this.currentMonthTotalExpense = this.currentMonthTotalExpense + expense.price;
-                    }
-                  }
-                );
-                this.dashboardService.getPreviousMonthExpenses().then(
-                  (previousMonthExpense: number) => {
-                    if (previousMonthExpense === 0) {
-                      this.percentageChange = 100;
-                    }
-                    else {
-                      this.percentageChange = ((this.currentMonthTotalExpense - previousMonthExpense) / previousMonthExpense) * 100;
-                    }
-                  }
-                );
-                this.store.dispatch(new dashboardActions.StopMonthlyGraphLoading);
-              }
-            );
-            this.dashboardService.getSixMonthCategorySummary().then(
-              (sixMonthSummary: SixMonthCategorySummary[]) => {
-                this.sixMonthSummary = [...sixMonthSummary];
+    this.previousMonthTotalExpense$ = this.dashboardService.getPreviousMonthTotalExpense();
+    this.currentMonthExpenseDetail$ = this.dashboardService.getCurrentMonthExpenseDetail();
+    this.lastSixMonthExpenseDetail$ = this.dashboardService.getLastSixMonthExpenseDetail();
+    this.categories$ = this.dashboardService.getCategories();
+  }
 
-                this.store.dispatch(new dashboardActions.StopSixMonthGraphLoading);
-              }
-            );
-            this.dashboardService.getLastSixMonthExpense().then(
-              (lastSixMonthlyExpenses: SixMonthSummary[]) => {
-                this.lastSixMonthTotalExpense = 0;
-                lastSixMonthlyExpenses.map(
-                  expense => {
-                    this.lastSixMonthChartColumnLabels.push(expense.month);
-                    this.lastSixMonthChartData.push(expense.price);
-                    this.lastSixMonthTotalExpense = this.lastSixMonthTotalExpense + expense.price;
-                  }
-                );
-                this.store.dispatch(new dashboardActions.StopYearlyGraphLoading);
-              }
-            );
-          }
-        );
-      }
-    );
+  onChange(data) {
+    this.dashboardService.getCategorySummary(data);
   }
 }

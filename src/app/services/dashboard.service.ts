@@ -1,43 +1,34 @@
-import { Injectable, resolveForwardRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Store, createReducerFactory } from '@ngrx/store';
-import { DashboardState, ExpenseSummary } from './../store/dashboard.reducer';
+import { Store } from '@ngrx/store';
+import { DashboardState } from './../store/dashboard.reducer';
 import * as appReducer from './../store/app.reducer';
-import { Subscription } from 'rxjs';
-import { map, take} from 'rxjs/operators';
-import {
-  ExpenseHistory,
-  ExpenseState,
-  Category,
-} from '../store/expense.reducer';
+import { Observable, of, Subject, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { Category, ExpenseHistory, ExpenseState } from '../store/expense.reducer';
 import * as dashboardActions from './../store/dashboard.action';
-import { SixMonthSummary } from './../store/dashboard.reducer';
-import { SixMonthCategorySummary } from './../store/dashboard.reducer';
+import * as expenseAction from './../store/expense.action';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
-  subscription: Subscription[] = [];
-  sixMonthSubscription: Subscription;
-  allExpenseSubscription: Subscription[] = [];
-  monthlyExpenseSubscription: Subscription[] = [];
-  sixMonthCategorySubscription: Subscription[] = [];
 
+  categoryChangeEvent = new Subject<number[]>();
   private monthName = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
+    {monthName: 'January', nextIndex: 1, previousIndex: 11},
+    {monthName: 'February', nextIndex: 2, previousIndex: 0},
+    {monthName: 'March', nextIndex: 3, previousIndex: 1},
+    {monthName: 'April', nextIndex: 4, previousIndex: 2},
+    {monthName: 'May', nextIndex: 5, previousIndex: 3},
+    {monthName: 'June', nextIndex: 6, previousIndex: 4},
+    {monthName: 'July', nextIndex: 7, previousIndex: 5},
+    {monthName: 'August', nextIndex: 8, previousIndex: 6},
+    {monthName: 'September', nextIndex: 9, previousIndex: 7},
+    {monthName: 'October', nextIndex: 10, previousIndex: 8},
+    {monthName: 'November', nextIndex: 11, previousIndex: 9},
+    {monthName: 'December', nextIndex: 0, previousIndex: 10}];
 
   constructor(
     private angularfire: AngularFirestore,
@@ -45,304 +36,217 @@ export class DashboardService {
     private expenseStore: Store<ExpenseState>
   ) {}
 
-  getAllExpenses(): Promise<void> {
-    return new Promise((resolve) => {
-      this.store
-        .select(appReducer.getUserId)
-        .pipe(take(1))
-        .subscribe((userId) => {
-          this.allExpenseSubscription.push(
-            this.angularfire
-              .collection('ExpenseHistory', (ref) => {
-                return ref.where('UserId', '==', userId);
-              })
-              .snapshotChanges()
-              .pipe(
-                map((result) => {
-                  return result.map((result) => {
-                    const id = result.payload.doc.id;
-                    const data = result.payload.doc.data() as ExpenseHistory;
-                    data.ExpenseId = id;
-                    data.PurchaseDate = result.payload.doc
-                      .get('PurchaseDate')
-                      .toDate();
-                    return { ...data };
-                  });
-                })
-              )
-              .subscribe((result) => {
-                this.store.dispatch(
-                  new dashboardActions.GetAllExpenses(result)
-                );
-                resolve();
-              })
-          );
-        });
-    });
-  }
-
-  getPreviousMonthExpenses(): Promise<number> {
-    return new Promise(
-      (resolve) => {
-        let monthlyExpense = 0;
-        const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
-        const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-        this.expenseStore.select(appReducer.getAllExpenses)
-        .pipe(take(1))
-        .subscribe(
-          allExpenses => {
-            for (const expense of allExpenses) {
-              if (expense.PurchaseDate >= startDate && expense.PurchaseDate <= endDate) {
-                monthlyExpense = monthlyExpense + expense.Price;
-              }
-            }
-            resolve(monthlyExpense);
+  getCategories() {
+    return this.angularfire
+    .collection('Category')
+    .snapshotChanges()
+    .pipe(
+      map((result) => {
+        const categoryNames: string[] = [];
+        const categories: Category[] = [];
+        result.map(
+          (item) => {
+            const data = item.payload.doc.data() as Category;
+            categoryNames.push(data.Name);
+            categories.push(data);
           }
         );
-      }
+        this.expenseStore.dispatch(new expenseAction.FetchCategories(categories));
+        return [...categoryNames];
+      })
     );
   }
 
-  getCurrentMonthExpenses(): Promise<ExpenseSummary[]> {
-    return new Promise((resolve) => {
-      let monthlyExpenses: ExpenseSummary[] = [];
-      const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-      const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-      this.monthlyExpenseSubscription.map((subscription) =>
-        subscription.unsubscribe()
-      );
-      this.monthlyExpenseSubscription.push(
-        this.expenseStore
-          .select(appReducer.getCategory)
-          .subscribe((categories) => {
-            monthlyExpenses = [];
-            categories.map((category) => {
-              let sum = 0;
-              this.monthlyExpenseSubscription.push(
-                this.store
-                  .select(appReducer.getAllExpenses)
-                  .subscribe((allExpenses) => {
-                    allExpenses.map((expense) => {
-                      if (
-                        expense.Category === category.Name &&
-                        expense.PurchaseDate >= startDate &&
-                        expense.PurchaseDate <= endDate
-                      ) {
-                        sum = sum + expense.Price;
-                      }
-                    });
-                    const exp: ExpenseSummary = {
-                      category: category.Name,
-                      price: sum,
-                    };
-                    monthlyExpenses.push(exp);
-                  })
-              );
-              resolve(monthlyExpenses);
-            });
-          })
-      );
-    });
-  }
-
-  getlastSixMonths(): Promise<string[]> {
-    return new Promise((resolve) => {
-      
-      const index = new Date().getMonth();
-      const lastSixMonths: string[] = [
-        this.monthName[((index + 0 + 7) >= 12) ? index + 0 + 7 - 12 : index + 0 + 7],
-        this.monthName[((index + 1 + 7) >= 12) ? index + 1 + 7 - 12 : index + 1 + 7],
-        this.monthName[((index + 2 + 7) >= 12) ? index + 2 + 7 - 12 : index + 2 + 7],
-        this.monthName[((index + 3 + 7) >= 12) ? index + 3 + 7 - 12 : index + 3 + 7],
-        this.monthName[((index + 4 + 7) >= 12) ? index + 4 + 7 - 12 : index + 4 + 7],
-        this.monthName[((index + 5 + 7) >= 12) ? index + 5 + 7 - 12 : index + 5 + 7],
-      ];
-      resolve(lastSixMonths);
-    });
-  }
-
-  getLastSixMonthExpense(): Promise<SixMonthSummary[]> {
-    return new Promise((resolve) => {
-      this.getlastSixMonths().then((lastSixMonths: string[]) => {
-        let sixMonthSummary: SixMonthSummary[] = [];
-        if (this.sixMonthSubscription !== undefined) {
-          this.sixMonthSubscription.unsubscribe();
-        }
-        this.sixMonthSubscription = this.store
-          .select(appReducer.getAllExpenses)
-          .subscribe((allExpenses) => {
-            sixMonthSummary = [];
-            const index = new Date().getMonth();
-            let expenseArray: number[] = [0, 0, 0, 0, 0, 0];
-            let summary: SixMonthSummary;
-            allExpenses.map((expense) => {
-              switch (expense.PurchaseDate.getMonth()) {
-                case (((index + 0 + 7) >= 12) ? index + 0 + 7 - 12 : index + 0 + 7):
-                  expenseArray[0] = expenseArray[0] + expense.Price;
-                  break;
-                case (((index + 1 + 7) >= 12) ? index + 1 + 7 - 12 : index + 1 + 7):
-                  expenseArray[1] = expenseArray[1] + expense.Price;
-                  break;
-                case (((index + 2 + 7) >= 12) ? index + 2 + 7 - 12 : index + 2 + 7):
-                  expenseArray[2] = expenseArray[2] + expense.Price;
-                  break;
-                case (((index + 3 + 7) >= 12) ? index + 3 + 7 - 12 : index + 3 + 7):
-                  expenseArray[3] = expenseArray[3] + expense.Price;
-                  break;
-                case (((index + 4 + 7) >= 12) ? index + 4 + 7 - 12 : index + 4 + 7):
-                  expenseArray[4] = expenseArray[4] + expense.Price;
-                  break;
-                case (((index + 5 + 7) >= 12) ? index + 5 + 7 - 12 : index + 5 + 7):
-                  expenseArray[5] = expenseArray[5] + expense.Price;
-                  break;
-              }
-            });
-            for (
-              let monthIndex = 0;
-              monthIndex < lastSixMonths.length;
-              monthIndex++
-            ) {
-              summary = {
-                month: lastSixMonths[monthIndex],
-                price: expenseArray[monthIndex],
-              };
-              sixMonthSummary.push(summary);
-            }
-            resolve(sixMonthSummary);
-          });
-      });
-    });
-  }
-
-  getSixMonthCategorySummary(): Promise<SixMonthCategorySummary[]> {
-      return new Promise((resolve) => {
-      const monthIndex = new Date().getMonth();
-      let categorySummary: SixMonthCategorySummary[] = [];
-      this.sixMonthCategorySubscription.map((subscription) =>
-        subscription.unsubscribe()
-      );
-      this.getTopSixExpenseCategory().then(
-        (topExpenseCategories: ExpenseSummary[]) => {
-          topExpenseCategories.map((topExpenseCategory) => {
-            let expenseSummary: ExpenseSummary[] = [];
-            this.sixMonthCategorySubscription.map((subscription) =>
-              subscription.unsubscribe()
-            );
-            this.sixMonthCategorySubscription.push(
-              this.expenseStore
-                .select(appReducer.getAllExpenses)
-                .subscribe((allExpenses: ExpenseHistory[]) => {
-                  this.getlastSixMonths().then(
-                    (lastSixMonths: string[]) => {
-                      for(let mIndex=0; mIndex<lastSixMonths.length; mIndex++) {
-                        let sum = 0;
-                        for (const expense of allExpenses) {
-                          if (
-                            this.monthName[expense.PurchaseDate.getMonth()] === lastSixMonths[mIndex] &&
-                            expense.Category === topExpenseCategory.category
-                          ) {
-                            sum = sum + expense.Price;
-                          }
-                        }
-                        expenseSummary.push({
-                          category: topExpenseCategory.category,
-                          price: sum,
-                        });
-                      }
-                      categorySummary.push({
-                        category: topExpenseCategory.category,
-                        expense: [...expenseSummary],
-                      });
-                      resolve(categorySummary);
-                    }
-                  );
-                })
-            );
-          });
-        }
-      );
-    });
-  }
-
-  getTopSixExpenseCategory(): Promise<ExpenseSummary[]> {
-    return new Promise((resolve) => {
-      const index = new Date().getMonth();
-      let sixMonthExpense: ExpenseSummary[] = [];
-      this.expenseStore
-          .select(appReducer.getCategory)
-          .pipe(take(1))
-          .subscribe((categories: Category[]) => {
-            for (const category of categories) {
-              let sum = 0;
-              this.store
-                  .select(appReducer.getAllExpenses)
-                  .pipe(take(1))
-                  .subscribe((allExpenses: ExpenseHistory[]) => {
-                    sum = 0;
-                    for (const allExpenseItem of allExpenses) {
-                      if (allExpenseItem.Category === category.Name) {
-                        switch(allExpenseItem.PurchaseDate.getMonth()) {
-                          case (((index + 0 + 7) >= 12) ? index + 0 + 7 - 12 : index + 0 + 7):
-                          case (((index + 1 + 7) >= 12) ? index + 1 + 7 - 12 : index + 1 + 7):
-                          case (((index + 2 + 7) >= 12) ? index + 2 + 7 - 12 : index + 2 + 7):
-                          case (((index + 3 + 7) >= 12) ? index + 3 + 7 - 12 : index + 3 + 7):
-                          case (((index + 4 + 7) >= 12) ? index + 4 + 7 - 12 : index + 4 + 7):
-                          case (((index + 5 + 7) >= 12) ? index + 5 + 7 - 12 : index + 5 + 7):
-                            sum = sum + allExpenseItem.Price;    
-                        }
-                      }
-                    }
-                  });
-              if (sixMonthExpense.length < 6 && sum > 0) {
-                sixMonthExpense.push({
-                  category: category.Name,
-                  price: sum,
+  getPreviousMonthTotalExpense() {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
+    return this.store
+      .select(appReducer.getUserId)
+      .pipe(switchMap(
+        (userId: string) => { 
+          return this.angularfire
+            .collection('ExpenseHistory', (ref) => {
+              return ref.where('UserId', '==', userId)
+                        .where('PurchaseDate', '>=', startDate)
+                        .where('PurchaseDate', '<=', endDate);
+            })
+            .snapshotChanges()
+            .pipe(
+              map((result) => {
+                const price: number[] = [];
+                result.map((result) => {
+                  const data = result.payload.doc.data() as ExpenseHistory;
+                  price.push(data.Price);
                 });
-                for (
-                  let expenseIndex = 0;
-                  expenseIndex < sixMonthExpense.length - 1;
-                  expenseIndex++
-                ) {
-                  if (
-                    sixMonthExpense[expenseIndex].price <
-                    sixMonthExpense[expenseIndex + 1].price
-                  ) {
-                    const swapVariable = { ...sixMonthExpense[expenseIndex] };
-                    sixMonthExpense[expenseIndex] = {
-                      ...sixMonthExpense[expenseIndex + 1],
-                    };
-                    sixMonthExpense[expenseIndex + 1] = { ...swapVariable };
+                return price.reduce((acc, price) => acc + price, 0)
+              })
+            )
+          }
+      ));
+  }
+
+  getCurrentMonthExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    return this.store
+      .select(appReducer.getUserId)
+      .pipe(switchMap(
+        (userId: string) => { 
+          return this.angularfire
+            .collection('ExpenseHistory', (ref) => {
+              return ref.where('UserId', '==', userId)
+                        .where('PurchaseDate', '>=', startDate)
+                        .where('PurchaseDate', '<=', endDate);
+            })
+            .snapshotChanges()
+            .pipe(
+              map((result) => {
+                const monthlyExpenseData: ExpenseHistory[] = [];
+                const categories: string[] = [];
+                const monthlyCategoryExpense: number[] = [];
+                result.map((result) => {
+                  const id = result.payload.doc.id;
+                  const data = result.payload.doc.data() as ExpenseHistory;
+                  data.ExpenseId = id;
+                  data.PurchaseDate = result.payload.doc
+                    .get('PurchaseDate')
+                    .toDate();
+                  const categoryIndex = categories.findIndex((category) => data.Category == category );
+                  if(categoryIndex == -1) {
+                    categories.push(data.Category);
+                    monthlyCategoryExpense.push(data.Price);
                   }
-                }
-              }
-              if (sixMonthExpense.length === 6 && sum > 0) {
-                let swapIndex = 0;
-                for (
-                  let expenseIndex = 0;
-                  expenseIndex < sixMonthExpense.length;
-                  expenseIndex++
-                ) {
-                  if (sum >= sixMonthExpense[expenseIndex].price) {
-                    swapIndex = expenseIndex;
+                  else {
+                    monthlyCategoryExpense[categoryIndex] = monthlyCategoryExpense[categoryIndex] + data.Price;
                   }
-                }
-                for (
-                  let expenseIndex = sixMonthExpense.length;
-                  expenseIndex > swapIndex;
-                  expenseIndex--
-                ) {
-                  sixMonthExpense[expenseIndex] = {
-                    ...sixMonthExpense[expenseIndex - 1],
-                  };
-                }
-                sixMonthExpense[swapIndex] = {
-                  category: category.Name,
-                  price: sum,
-                };
+                  monthlyExpenseData.push(data);
+                });
+                this.store.dispatch(new dashboardActions.StopMonthlyGraphLoading);
+                return {categories: [... categories],
+                        monthlyCategoryExpense: [... monthlyCategoryExpense],
+                        totalMonthlyExpense: monthlyCategoryExpense.reduce((acc, price) => acc + price, 0)}
+              })
+            )
+          }
+      ));
+  }
+
+  getLastSixMonthExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    return this.store
+      .select(appReducer.getUserId)
+      .pipe(switchMap(
+        (userId: string) => { 
+          return this.angularfire
+            .collection('ExpenseHistory', (ref) => {
+              return ref.where('UserId', '==', userId)
+                        .where('PurchaseDate', '>=', startDate)
+                        .where('PurchaseDate', '<=', endDate);
+            })
+            .snapshotChanges()
+            .pipe(
+              map((result) => {
+                const sixMonthExpenseDetail: ExpenseHistory[] = [];
+                const categoryName = 'Maid';
+                const categorySummary: number[] = [0, 0, 0, 0, 0, 0];
+                const sixMonthExpenseSummary: number[] = [0, 0, 0, 0, 0, 0];
+                const currentMonthIndex = new Date().getMonth();
+                result.map((result) => {
+                  const data = result.payload.doc.data() as ExpenseHistory;
+                  const id = result.payload.doc.id;
+                  data.ExpenseId = id;
+                  const purchaseDate = result.payload.doc.get('PurchaseDate').toDate();
+                  data.PurchaseDate = purchaseDate;
+                  sixMonthExpenseDetail.push(data);
+                  switch (purchaseDate.getMonth()) {
+                    case this.monthName[this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+                      sixMonthExpenseSummary[0] = sixMonthExpenseSummary[0] + data.Price;
+                      categorySummary[0] = data.Category == categoryName ? categorySummary[0] + data.Price : categorySummary[0];
+                      break;
+                    case this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+                      sixMonthExpenseSummary[1] = sixMonthExpenseSummary[1] + data.Price;
+                      categorySummary[1] = data.Category == categoryName ? categorySummary[1] + data.Price : categorySummary[1];
+                      break;
+                    case this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex:
+                      sixMonthExpenseSummary[2] = sixMonthExpenseSummary[2] + data.Price;
+                      categorySummary[2] = data.Category == categoryName ? categorySummary[2] + data.Price : categorySummary[2];
+                      break;
+                    case this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex:
+                      sixMonthExpenseSummary[3] = sixMonthExpenseSummary[3] + data.Price;
+                      categorySummary[3] = data.Category == categoryName ? categorySummary[3] + data.Price : categorySummary[3];
+                      break;
+                    case this.monthName[currentMonthIndex].previousIndex:
+                      sixMonthExpenseSummary[4] = sixMonthExpenseSummary[4] + data.Price;
+                      categorySummary[4] = data.Category == categoryName ? categorySummary[4] + data.Price : categorySummary[4];
+                      break;
+                    case this.monthName[currentMonthIndex].previousIndex+1:
+                      sixMonthExpenseSummary[5] = sixMonthExpenseSummary[5] + data.Price;
+                      categorySummary[5] = data.Category == categoryName ? categorySummary[5] + data.Price : categorySummary[5];
+                      break;
+                  }
+                });
+                this.store.dispatch(new dashboardActions.StopYearlyGraphLoading);
+                this.store.dispatch(new dashboardActions.StopSixMonthGraphLoading);
+                this.store.dispatch(new dashboardActions.SetSixMonthExpenseHistory(sixMonthExpenseDetail));
+                return {sixMonthExpenseSummary: [... sixMonthExpenseSummary],
+                        categorySummary: [...categorySummary], 
+                        sixMonthTotalExpense: sixMonthExpenseSummary.reduce((acc, price) => acc + price, 0)}
+              })
+            )
+          }
+      ));
+  }
+
+  getlastSixMonths(): Observable<string[]> {
+    let currentMonthIndex = new Date().getMonth();
+    const lastSixMonths: string[] = [];
+    for(let index=0; index < 6; index++) {
+      lastSixMonths.push(this.monthName[currentMonthIndex].monthName);
+      currentMonthIndex = this.monthName[currentMonthIndex].previousIndex;
+    }
+    lastSixMonths.reverse();
+    return of(lastSixMonths);
+  }
+
+  getCategorySummary(categoryName: string) {
+    const categorySummary: number[] = [0, 0, 0, 0, 0, 0];
+    const currentMonthIndex = new Date().getMonth();
+    return this.store.select(appReducer.getSixMonthExpenseHistory)
+    .pipe(
+      map(
+        (data) => {
+          data.map(
+            (expenseItem) => {
+              switch (expenseItem.PurchaseDate.getMonth()) {
+                case this.monthName[this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+                  categorySummary[0] = expenseItem.Category == categoryName ? categorySummary[0] + expenseItem.Price : categorySummary[0];
+                  break;
+                case this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+                  categorySummary[1] = expenseItem.Category == categoryName ? categorySummary[1] + expenseItem.Price : categorySummary[1];
+                  break;
+                case this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex:
+                  categorySummary[2] = expenseItem.Category == categoryName ? categorySummary[2] + expenseItem.Price : categorySummary[2];
+                  break;
+                case this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex:
+                  categorySummary[3] = expenseItem.Category == categoryName ? categorySummary[3] + expenseItem.Price : categorySummary[3];
+                  break;
+                case this.monthName[currentMonthIndex].previousIndex:
+                  categorySummary[4] = expenseItem.Category == categoryName ? categorySummary[4] + expenseItem.Price : categorySummary[4];
+                  break;
+                case this.monthName[currentMonthIndex].previousIndex+1:
+                  categorySummary[5] = expenseItem.Category == categoryName ? categorySummary[5] + expenseItem.Price : categorySummary[5];
+                  break;
               }
             }
-            resolve(sixMonthExpense);
-          });
-    });
+          );
+          return [... categorySummary];
+        }
+      ),
+      take(1)
+    )
+    .subscribe(
+      (categorySummary) => this.categoryChangeEvent.next(categorySummary)
+    );
   }
 }
