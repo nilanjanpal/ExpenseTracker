@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatDialog } from '@angular/material/dialog';
 import { FeedbackFormComponent } from './shared/feedback-form/feedback-form.component';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -22,10 +22,11 @@ export class AppComponent implements OnInit {
 
   constructor(private store: Store<AuthState>,
               private matDialog: MatDialog,
-              private cookieService: CookieService) {}
+              private authService: AuthService) {}
 
   ngOnInit(): void {
     this.isAuthenticated$ = this.store.select(appReducer.getIsAuthenticated);
+    this.authService.autoLogin();
   }
 
   onToggle(): void {

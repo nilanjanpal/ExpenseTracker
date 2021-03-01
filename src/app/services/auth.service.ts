@@ -7,7 +7,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {  Subscription } from 'rxjs';
 import { ExpenseService } from './expense.service';
-import { DashboardService } from './dashboard.service';
 import { auth } from 'firebase';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -21,10 +20,23 @@ export class AuthService {
                 private snackbar: MatSnackBar,
                 private router: Router,
                 private expenseService: ExpenseService,
-                private dashboardService: DashboardService,
                 private cookieService: CookieService) {}
 
     subscription: Subscription;
+
+    autoLogin() {
+      const result = this.cookieService.get('user');
+      if(result != "") {
+          const user = JSON.parse(result);
+          if( new Date(user.user.stsTokenManager.expirationTime) > new Date() ) {
+              this.store.dispatch(new authActions.Authenticate(user.user.uid));
+              this.router.navigate(['/dashboard']);
+          }
+      }
+      else {
+        this.router.navigate(['/login']);
+      }
+    }
 
     login(email: string, password: string): void {
         this.store.dispatch(new authActions.StartBuffer());
