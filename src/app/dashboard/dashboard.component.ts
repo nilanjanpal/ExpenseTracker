@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { DashboardService } from '../services/dashboard.service';
 import { ExpenseService } from '../services/expense.service';
-import { DashboardState, ExpenseSummary } from '../store/dashboard.reducer';
+import { DashboardState } from '../store/dashboard.reducer';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +16,7 @@ import { DashboardState, ExpenseSummary } from '../store/dashboard.reducer';
 })
 export class DashboardComponent implements OnInit {
 
+  today: number;
   monthlyGraphLoadingStatus$: Observable<boolean>;
   yearlyGraphLoadingStatus$: Observable<boolean>;
   sixMonthGraphLoadingStatus$: Observable<boolean>;
@@ -28,6 +29,7 @@ export class DashboardComponent implements OnInit {
                                           totalMonthlyExpense: number}>;
   categories$: Observable<string[]>;
   categorySummary$: Observable<number[]>;
+  allMonths$: Observable<string[]>;
 
   /** Based on the screen size, switch from standard to one column per row */
   cardLayout = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -46,7 +48,7 @@ export class DashboardComponent implements OnInit {
           smallCard: {row: 1, col: 1},
           wideCard: {row: 2, col: 2},
           medCard: {row: 1.5, col: 1.5},
-          rowheight: '180px'
+          rowheight: '200px'
         };
       }
     })
@@ -58,6 +60,7 @@ export class DashboardComponent implements OnInit {
               private store: Store<DashboardState>) {}
 
   ngOnInit(): void {
+    this.today = (new Date()).getMonth();
     this.store.dispatch(new dashboardActions.StartMonthlyGraphLoading);
     this.store.dispatch(new dashboardActions.StartSixMonthGraphLoading);
     this.store.dispatch(new dashboardActions.StartYearlyGraphLoading);
@@ -65,9 +68,18 @@ export class DashboardComponent implements OnInit {
     this.yearlyGraphLoadingStatus$ = this.store.select(appReducer.getYearlyGraphLoadingStatus);
     this.sixMonthGraphLoadingStatus$ = this.store.select(appReducer.getSixMonthGraphLoadingStatus);
     this.previousMonthTotalExpense$ = this.dashboardService.getPreviousMonthTotalExpense();
-    this.currentMonthExpenseDetail$ = this.dashboardService.getCurrentMonthExpenseDetail();
     this.lastSixMonthExpenseDetail$ = this.dashboardService.getLastSixMonthExpenseDetail();
+    this.currentMonthExpenseDetail$ = this.dashboardService.getCurrentMonthExpenseDetail();
     this.categories$ = this.dashboardService.getCategories();
+    this.allMonths$ = this.dashboardService.getAllMonths();
+  }
+
+  onMonthChange(data) {
+    const date = '01-' + data + '-'+ (new Date().getFullYear());
+    const startDate = new Date(new Date().getFullYear(), new Date(date).getMonth(), 1);
+    const endDate = new Date(new Date().getFullYear(), new Date(date).getMonth() + 1, 0);
+    const monthExpenseDetail$ = this.dashboardService.getMonthlyExpenseDetail(startDate, endDate);
+    this.dashboardService.monthlyExpenseChangeEvent.next(monthExpenseDetail$);
   }
 
   onChange(data) {

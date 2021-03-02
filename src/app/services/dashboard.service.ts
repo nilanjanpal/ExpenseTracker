@@ -16,6 +16,9 @@ import { switchMap } from 'rxjs/operators';
 export class DashboardService {
 
   categoryChangeEvent = new Subject<number[]>();
+  monthlyExpenseChangeEvent = new Subject<Observable<{categories: string[],
+                                                      monthlyCategoryExpense: number[],
+                                                      totalMonthlyExpense: number}>>();
   private monthName = [
     {monthName: 'January', nextIndex: 1, previousIndex: 11},
     {monthName: 'February', nextIndex: 2, previousIndex: 0},
@@ -85,9 +88,7 @@ export class DashboardService {
       ));
   }
 
-  getCurrentMonthExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  getMonthlyExpenseDetail(startDate: Date, endDate: Date) {
     return this.store
       .select(appReducer.getUserId)
       .pipe(switchMap(
@@ -129,6 +130,13 @@ export class DashboardService {
             )
           }
       ));
+  }
+
+  getCurrentMonthExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    const monthlyExpenseDetail$ = this.getMonthlyExpenseDetail(startDate, endDate);
+    return monthlyExpenseDetail$;
   }
 
   getLastSixMonthExpenseDetail() {
@@ -207,6 +215,14 @@ export class DashboardService {
     }
     lastSixMonths.reverse();
     return of(lastSixMonths);
+  }
+
+  getAllMonths(): Observable<string[]> {
+    const allMonths: string[] = [];
+    this.monthName.map(
+      month => allMonths.push(month.monthName)
+    )
+    return of(allMonths);
   }
 
   getCategorySummary(categoryName: string) {
