@@ -1,5 +1,5 @@
-/* a
-:hover
-:active{
-    cursor: pointer;
-} */
+.menu {
+    font-size: 15px; 
+    color:#2196F3;
+    padding-left: 5px;
+}

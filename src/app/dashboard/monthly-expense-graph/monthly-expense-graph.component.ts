@@ -80,9 +80,12 @@ export class MonthlyExpenseGraphComponent implements OnInit, OnDestroy {
             else {
               this.isNoData = true;
             }
+            const colors = this.utilService.getColors();
             this.graphData.map(
-              () => {
-                this.chartColors[0].backgroundColor.push(this.utilService.getRandomColor());
+              (data, index) => {
+                console.log(colors[index]);
+                this.chartColors[0].backgroundColor.push(colors[index]);
+                // this.chartColors[0].backgroundColor.push(this.utilService.getRandomColor());
               }
             )
           }

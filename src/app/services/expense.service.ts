@@ -6,6 +6,7 @@ import * as appReducer from './../store/app.reducer';
 import { Subject,  Subscription } from 'rxjs';
 import { ExpenseHistory } from './../store/expense.reducer';
 import { map, take } from 'rxjs/operators';
+import Swal from './../../../node_modules/sweetalert2/dist/sweetalert2.min.js';
 
 @Injectable({
     providedIn: 'root',
@@ -34,6 +35,13 @@ export class ExpenseService {
     }
 
     saveExpenses(expenseItems): void {
+        const toast = Swal.mixin({
+            icon: 'success',
+            toast: true,
+            position: 'top',
+            showConfirmButton: true,
+            timer: 3000
+          });
         this.store.select(appReducer.getUserId).subscribe(
             userId => {
                 expenseItems.map(
@@ -46,7 +54,16 @@ export class ExpenseService {
                             Comment: item.comment,
                             UserId: userId,
                             isEdited: false
-                        });
+                        })
+                        .then(
+                            () => {
+                                toast.fire({
+                                    type: 'success',
+                                    animation: true,
+                                    title: 'New Item Added Successfully'
+                                });
+                            }                         
+                        );
                     }
                 );
                 this.expenseTabSelect.next(0);
