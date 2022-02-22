@@ -1,0 +1,36 @@
+<!-- <div id="chart">
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [dataLabels]="chartOptions.dataLabels"
+    [plotOptions]="chartOptions.plotOptions"
+    [yaxis]="chartOptions.yaxis"
+    [xaxis]="chartOptions.xaxis"
+    [fill]="chartOptions.fill"
+    [title]="chartOptions.title"
+  ></apx-chart>
+</div> -->
+<div fxLayout>
+  <h4 style="color: darkblue; padding: 0px; margin: 0px;">Annual Expense By Category</h4>
+  <div fxFlex fxLayout fxLayoutAlign="flex-end">
+    <label style="color: darkblue; margin-right: 15px;">Category</label>
+    <select name="category" id="category" (change)="onChange($event.target.value)">
+      <option [value]=category.Name *ngFor="let category of (categories$ | async)">{{category.Name}}</option>
+    </select>
+  </div>
+</div>
+<div>
+  <div *ngIf="series != undefined">
+    <apx-chart
+      [series]="series"
+      [chart]="chartOptions.chart"
+      [dataLabels]="chartOptions.dataLabels"
+      [plotOptions]="chartOptions.plotOptions"
+      [yaxis]="chartOptions.yaxis"
+      [xaxis]="chartOptions.xaxis"
+      [fill]="chartOptions.fill"
+      [title]="chartOptions.title"
+      #chart
+    ></apx-chart>
+  </div>
+</div>

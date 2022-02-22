@@ -1,0 +1,51 @@
+<section fxLayoutAlign="center center" style="height: 100%; width: 100%;">
+    <mat-card style="margin-right: 20px;" fxHide.lt-sm>
+      <mat-card-content>
+        <img src="./../assets/signup_background.jpg" fxFlex= "500px">
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="mat-elevation-z8" fxFlex.lt-sm="90%" fxFlex="500px">
+        <mat-card-content>
+            <form [formGroup]="signupForm" fxLayout="column" (ngSubmit)="onSubmit()">
+                <mat-form-field>
+                    <mat-label >Display name</mat-label>
+                    <input type="text" matInput formControlName="displayName">
+                    <mat-error>You must enter your display name</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label >Enter your email</mat-label>
+                    <input type="email" matInput formControlName="email">
+                    <mat-error>You must enter your email</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label >Enter your password</mat-label>
+                    <input type="password" matInput formControlName="password">
+                    <mat-hint align="end">{{ this.signupForm.value.password.length }}</mat-hint>
+                    <mat-error *ngIf="this.signupForm.value.password.length === 0">You must enter your password</mat-error>
+                    <mat-error *ngIf="this.signupForm.value.password.length >0 && this.signupForm.value.password.length <= 6 ">Password must be of minimum 6 characters</mat-error>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label >Confirm your password</mat-label>
+                    <input type="password" matInput formControlName="confirmPassword">
+                    <mat-hint align="end">{{ this.signupForm.value.confirmPassword.length }}</mat-hint>
+                    <mat-error>You must confirm your password</mat-error>
+                </mat-form-field>
+                <mat-form-field color="accent" appearance="fill">
+                    <mat-label >Enter your Date of Birth</mat-label>
+                    <input matInput formControlName="dob" [matDatepicker]="picker">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker color="primary"></mat-datepicker>
+                    <mat-error>You must enter your date of birth</mat-error>
+                </mat-form-field>
+                <mat-checkbox before="true" color="accent" formControlName="tnc">Accept Terms and Conditions</mat-checkbox>
+                <div fxLayoutAlign="center" fxLayoutGap="5px">
+                    <button type="submit" mat-raised-button color="primary" [disabled]="!signupForm.valid" fxFlex="50%">Sign Up</button>
+                    <button type="submit" mat-raised-button color="accent" (click)="onClear()" fxFlex="50%">Clear</button>
+                </div>
+            </form>
+        </mat-card-content>
+        <mat-card-footer>
+            <mat-progress-bar mode="buffer" *ngIf="(isBufferOn$ | async)"></mat-progress-bar>
+        </mat-card-footer>
+    </mat-card>
+</section>

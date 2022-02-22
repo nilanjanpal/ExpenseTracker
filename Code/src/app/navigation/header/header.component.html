@@ -1,0 +1,25 @@
+<mat-toolbar color="primary">
+    <button mat-button *ngIf="(isAuthenticated$ | async)" (click)="onClick()" fxHide fxShow.lt-md>
+        <mat-icon>menu</mat-icon>
+    </button>
+    <button mat-button style="color: white;" color="primary" routerLink="/dashboard">Expense Tracker</button>
+    <div fxFlex fxLayout="row" fxLayoutGap=5px fxLayoutAlign="flex-end">
+        <button style="color: white;" mat-button routerLink="/login" *ngIf="!(isAuthenticated$ | async)"
+            color="primary">Login</button>
+        <button style="color: white;" mat-button routerLink="/signup" *ngIf="!(isAuthenticated$ | async)"
+            color="primary">Sign Up</button>
+        <button mat-mini-fab color="primary" *ngIf="(isAuthenticated$ | async)" [matMenuTriggerFor]="menu">
+            <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngIf="(isAuthenticated$ | async)"
+                color="primary" routerLink="profile">
+                <span style="color:darkblue">Profile</span>
+            </button>
+            <button mat-menu-item (click)="onLogout()" *ngIf="(isAuthenticated$ | async)"
+                color="primary">
+                <span style="color:darkblue">Logout</span>
+            </button>
+        </mat-menu>
+    </div>
+</mat-toolbar>

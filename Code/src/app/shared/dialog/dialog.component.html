@@ -1,0 +1,9 @@
+<span mat-dialog-title *ngIf="data.dialogType === 1">Confirm</span>
+<span mat-dialog-title *ngIf="data.dialogType === 2">Comments</span>
+<span mat-dialog-content style="margin: 30px" *ngIf="data.dialogType === 1">Are you sure to Delete?</span>
+<span mat-dialog-content style="margin: 30px" *ngIf="data.dialogType === 2">{{ data.comment }}</span>
+<div mat-dialog-actions fxLayout fxLayoutGap="5px" fxLayoutAlign="center">
+    <button mat-flat-button color="warn" [mat-dialog-close]="true" *ngIf="data.dialogType === 1">Delete</button>
+    <button mat-flat-button color="primary" [mat-dialog-close]="false" *ngIf="data.dialogType === 1">Cancel</button>
+    <button mat-flat-button color="primary" [mat-dialog-close]="false" *ngIf="data.dialogType === 2">Ok</button>
+</div>
