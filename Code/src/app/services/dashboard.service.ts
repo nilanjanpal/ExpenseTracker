@@ -43,8 +43,7 @@ export class DashboardService {
   getPreviousMonthTotalExpense() {
     const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
     const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-    const previousMonthExpenseDetail$ = this.calculateExpenseDataByDate(startDate, endDate);
-    return previousMonthExpenseDetail$;
+    return this.getExpenseDetailByDateRange(startDate, endDate);
   }
 
   /* 
@@ -65,8 +64,8 @@ export class DashboardService {
           return this.angularfire
             .collection('ExpenseHistory', (ref) => {
               return ref.where('UserId', '==', userId)
-                        .where('PurchaseDate', '>=', startDate)
-                        .where('PurchaseDate', '<=', endDate);
+                        // .where('PurchaseDate', '>=', startDate)
+                        // .where('PurchaseDate', '<=', endDate);
             })
             .snapshotChanges()
             .pipe(
@@ -133,9 +132,7 @@ export class DashboardService {
     );
   }
 
-  getCurrentMonthExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  getExpenseDetailByDateRange(startDate: Date, endDate: Date) {
     return this.store.select(appReducer.getExpenseHistory)
     .pipe(
       map(
@@ -155,27 +152,30 @@ export class DashboardService {
     );
   }
 
+  getCurrentMonthExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    return this.getExpenseDetailByDateRange(startDate, endDate);
+  }
+
   getPreviousMonthExpenseDetail() {
     const startDate = new Date(new Date().getFullYear(), new Date().getMonth() == 0 ? 11 : new Date().getMonth() -1, 1);
     const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-    return this.store.select(appReducer.getExpenseHistory)
-    .pipe(
-      map(
-        (expenseHistoryData) => {
-          let totalExpense: number = 0;
-          expenseHistoryData.map(
-            expenseItem => {
-              if(expenseItem.PurchaseDate >= startDate && expenseItem.PurchaseDate <= endDate) {
-                totalExpense = totalExpense + expenseItem.Price;
-              }
-            }
-          );
-          this.store.dispatch(new dashboardActions.StopCurrentMonthExpenseCalculation);
-          return totalExpense;
-        }
-      )
-    );
+    return this.getExpenseDetailByDateRange(startDate, endDate);
   }
+
+  getCurrentYearExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear(), 0, 1);
+    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    return this.getExpenseDetailByDateRange(startDate, endDate);
+  }
+
+  getPreviousYearExpenseDetail() {
+    const startDate = new Date(new Date().getFullYear() - 1, 0, 1);
+    const endDate = new Date(new Date().getFullYear() -1 , 11, 31);
+    return this.getExpenseDetailByDateRange(startDate, endDate);
+  }
+
 
   getTwelveMonthExpenseDetail() {
     const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1);
@@ -183,121 +183,65 @@ export class DashboardService {
     const annualExpenseDetail$ = this.calculateExpenseDataByDate(startDate, endDate);
     return annualExpenseDetail$;
   }
+
+  getYears() {
+    const years: string[] = [''];
+    return this.store.select(appReducer.getExpenseHistory)
+    .pipe(
+      map(
+        (expenseHistory) => {
+          expenseHistory.map(
+            expenseData => {
+              let expenseYear = expenseData.PurchaseDate.getFullYear();
+              if(years.findIndex(year => parseInt(year) == expenseYear) == -1) {
+                years.push(expenseYear.toString());
+              }
+            }
+          );
+          return years;
+        }
+      )
+    )
+  }
   
   getAnnualExpenseDetailByCategory(category: String) {
     const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1);
     const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    const expenseDetail = [{expense: 0, monthName: 'January'},
-                           {expense: 0, monthName: 'February'},
-                           {expense: 0, monthName: 'March'},
-                           {expense: 0, monthName: 'April'},
-                           {expense: 0, monthName: 'May'},
-                           {expense: 0, monthName: 'June'},
-                           {expense: 0, monthName: 'July'},
-                           {expense: 0, monthName: 'August'},
-                           {expense: 0, monthName: 'September'},
-                           {expense: 0, monthName: 'October'},
-                           {expense: 0, monthName: 'November'},
-                           {expense: 0, monthName: 'December'}];
-    return this.store
-      .select(appReducer.getUserId)
-      .pipe(switchMap(
-        (userId: string) => { 
-          return this.angularfire
-            .collection('ExpenseHistory', (ref) => {
-              return ref.where('UserId', '==', userId)
-                        .where('Category', '==', category)
-                        .where('PurchaseDate', '>=', startDate)
-                        .where('PurchaseDate', '<=', endDate);
-            })
-            .snapshotChanges()
-            .pipe(
-              map((result) => {
-                const sixMonthExpenseDetail: ExpenseHistory[] = [];
-                result.map((result) => {
-                  const data = result.payload.doc.data() as ExpenseHistory;
-                  const id = result.payload.doc.id;
-                  data.ExpenseId = id;
-                  const purchaseDate = result.payload.doc.get('PurchaseDate').toDate();
-                  data.PurchaseDate = purchaseDate;
-                  sixMonthExpenseDetail.push(data);
-                  const monthIndex = purchaseDate.getMonth();
-                  expenseDetail[monthIndex].expense = expenseDetail[monthIndex].expense + data.Price; 
-                });
-                this.store.dispatch(new dashboardActions.StopSixMonthGraphLoading);
-                this.store.dispatch(new dashboardActions.SetSixMonthExpenseHistory(sixMonthExpenseDetail));
-                return [...expenseDetail];
-              })
-            )
-          }
-      ),
-      take(1));
-  }
-
-  getLastSixMonthExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    return this.store
-      .select(appReducer.getUserId)
-      .pipe(switchMap(
-        (userId: string) => { 
-          return this.angularfire
-            .collection('ExpenseHistory', (ref) => {
-              return ref.where('UserId', '==', userId)
-                        .where('PurchaseDate', '>=', startDate)
-                        .where('PurchaseDate', '<=', endDate);
-            })
-            .snapshotChanges()
-            .pipe(
-              map((result) => {
-                const sixMonthExpenseDetail: ExpenseHistory[] = [];
-                const categoryName = 'Maid';
-                const categorySummary: number[] = [0, 0, 0, 0, 0, 0];
-                const sixMonthExpenseSummary: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                const currentMonthIndex = new Date().getMonth();
-                result.map((result) => {
-                  const data = result.payload.doc.data() as ExpenseHistory;
-                  const id = result.payload.doc.id;
-                  data.ExpenseId = id;
-                  const purchaseDate = result.payload.doc.get('PurchaseDate').toDate();
-                  data.PurchaseDate = purchaseDate;
-                  sixMonthExpenseDetail.push(data);
-                  switch (purchaseDate.getMonth()) {
-                    case this.monthName[this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex].previousIndex:
-                      sixMonthExpenseSummary[0] = sixMonthExpenseSummary[0] + data.Price;
-                      categorySummary[0] = data.Category == categoryName ? categorySummary[0] + data.Price : categorySummary[0];
-                      break;
-                    case this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex:
-                      sixMonthExpenseSummary[1] = sixMonthExpenseSummary[1] + data.Price;
-                      categorySummary[1] = data.Category == categoryName ? categorySummary[1] + data.Price : categorySummary[1];
-                      break;
-                    case this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex:
-                      sixMonthExpenseSummary[2] = sixMonthExpenseSummary[2] + data.Price;
-                      categorySummary[2] = data.Category == categoryName ? categorySummary[2] + data.Price : categorySummary[2];
-                      break;
-                    case this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex:
-                      sixMonthExpenseSummary[3] = sixMonthExpenseSummary[3] + data.Price;
-                      categorySummary[3] = data.Category == categoryName ? categorySummary[3] + data.Price : categorySummary[3];
-                      break;
-                    case this.monthName[currentMonthIndex].previousIndex:
-                      sixMonthExpenseSummary[4] = sixMonthExpenseSummary[4] + data.Price;
-                      categorySummary[4] = data.Category == categoryName ? categorySummary[4] + data.Price : categorySummary[4];
-                      break;
-                    case currentMonthIndex:
-                      sixMonthExpenseSummary[5] = sixMonthExpenseSummary[5] + data.Price;
-                      categorySummary[5] = data.Category == categoryName ? categorySummary[5] + data.Price : categorySummary[5];
-                      break;
-                  }
-                });
-                this.store.dispatch(new dashboardActions.StopSixMonthGraphLoading);
-                this.store.dispatch(new dashboardActions.SetSixMonthExpenseHistory(sixMonthExpenseDetail));
-                return {sixMonthExpenseSummary: [... sixMonthExpenseSummary],
-                        categorySummary: [...categorySummary], 
-                        sixMonthTotalExpense: sixMonthExpenseSummary.reduce((acc, price) => acc + price, 0)}
-              })
-            )
-          }
-      ));
+    const expenseDetail = [{expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''},
+                           {expense: 0, monthName: ''}];
+    expenseDetail.map(
+      (data, index) => {
+        let monthIndex = (new Date().getMonth() - 11 + index < 0 ) ? (new Date().getMonth() - 11 + index) + 12 : (new Date().getMonth() - 11 + index);
+        data.monthName = this.monthName[monthIndex].monthName;
+      }
+    );
+    return this.store.select(appReducer.getExpenseHistory)
+    .pipe(
+      map(
+        (expenseHistoryData) => {
+          expenseHistoryData.map(
+            expenseData => {
+              if((expenseData.PurchaseDate > startDate && expenseData.PurchaseDate < endDate) && expenseData.Category == category) {
+                const index = expenseData.PurchaseDate.getMonth();
+                const expenseIndex = expenseDetail.findIndex(data => data.monthName == this.monthName[index].monthName)
+                expenseDetail[expenseIndex].expense = expenseDetail[expenseIndex].expense + Math.round(expenseData.Price); 
+              }
+            }
+          );
+          return [...expenseDetail];
+        }
+      )
+    );
   }
 
   /* 
@@ -317,8 +261,8 @@ export class DashboardService {
           return this.angularfire
             .collection('ExpenseHistory', (ref) => {
               return ref.where('UserId', '==', userId)
-                        .where('PurchaseDate', '>=', startDate)
-                        .where('PurchaseDate', '<=', endDate);
+                        // .where('PurchaseDate', '>=', startDate)
+                        // .where('PurchaseDate', '<=', endDate);
             })
             .snapshotChanges()
             .pipe(
@@ -375,15 +319,16 @@ export class DashboardService {
     .pipe(
       switchMap(
         (months) => {
-          return this.getExpenseHistoryDetailByDateRange(startDate, endDate)
+          return this.store.select(appReducer.getExpenseHistory)
           .pipe(
             map(
               expenseData => {
-                expenseData.expenseDetail.map(
+                expenseData.map(
                   expenseItem => {
-                    const index = months.indexOf(this.monthName[expenseItem.PurchaseDate.getMonth()].monthName);
-                    lastAnnualExpense[index] = lastAnnualExpense[index] + expenseItem.Price;
-                    expenseItem.PurchaseDate.getMonth();
+                    if(expenseItem.PurchaseDate >= startDate && expenseItem.PurchaseDate <= endDate) {
+                      const index = months.indexOf(this.monthName[expenseItem.PurchaseDate.getMonth()].monthName);
+                      lastAnnualExpense[index] = lastAnnualExpense[index] + Math.round(expenseItem.Price);
+                    }
                   }
                 );
                 return {
@@ -396,36 +341,6 @@ export class DashboardService {
         }
       )
     );
-  }
-
-  getCurrentYearExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), 0, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    return this.getExpenseHistoryDetailByDateRange(startDate, endDate)
-    .pipe(
-      map(
-        (expenseData) => {
-          const expenseDetail = expenseData.expenseDetail;
-          const totalExpense = expenseDetail.reduce((total, data) => (total + data.Price), 0);
-          return totalExpense;
-        }
-      )
-    )
-  }
-
-  getPreviousYearExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear() - 1, 0, 1);
-    const endDate = new Date(new Date().getFullYear() -1 , 11, 31);
-    return this.getExpenseHistoryDetailByDateRange(startDate, endDate)
-    .pipe(
-      map(
-        (expenseData) => {
-          const expenseDetail = expenseData.expenseDetail;
-          const totalExpense = expenseDetail.reduce((total, data) => (total + data.Price), 0);
-          return totalExpense;
-        }
-      )
-    )
   }
 
   getlastMonthNames(numberOfMonths): Observable<string[]> {
@@ -457,6 +372,10 @@ export class DashboardService {
         }
       )
     )
+  }
+
+  getListOfYears() {
+
   }
 
   getCategorySummary(categoryName: string) {

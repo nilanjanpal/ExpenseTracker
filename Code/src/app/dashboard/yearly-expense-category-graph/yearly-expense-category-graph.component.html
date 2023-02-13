@@ -1,22 +1,18 @@
-<!-- <div id="chart">
-  <apx-chart
-    [series]="chartOptions.series"
-    [chart]="chartOptions.chart"
-    [dataLabels]="chartOptions.dataLabels"
-    [plotOptions]="chartOptions.plotOptions"
-    [yaxis]="chartOptions.yaxis"
-    [xaxis]="chartOptions.xaxis"
-    [fill]="chartOptions.fill"
-    [title]="chartOptions.title"
-  ></apx-chart>
-</div> -->
-<div fxLayout>
-  <h4 style="color: darkblue; padding: 0px; margin: 0px;">Annual Expense By Category</h4>
-  <div fxFlex fxLayout fxLayoutAlign="flex-end">
-    <label style="color: darkblue; margin-right: 15px;">Category</label>
-    <select name="category" id="category" (change)="onChange($event.target.value)">
-      <option [value]=category.Name *ngFor="let category of (categories$ | async)">{{category.Name}}</option>
-    </select>
+<div fxLayout="row" >
+  <h4 fxLayout="row" fxLayoutAlign="start start" style="color: darkblue; padding: 0px; margin: 0px;">Category Analysis</h4>
+  <div fxLayout="row" fxLayoutAlign="flex-end start" fxFlex fxLayoutGap="10px">
+    <div >
+      <label style="color: darkblue; margin-right: 15px;">Category</label>
+      <select name="category" id="category" (change)="onCategoryChange($event.target.value)">
+        <option [value]=category.Name *ngFor="let category of (categories$ | async)">{{category.Name}}</option>
+      </select>
+    </div>
+    <div>
+      <label style="color: darkblue; margin-right: 15px;">Years</label>
+      <select name="year" id="year" (change)="onYearChange($event.target.value)">
+        <option [value]=year *ngFor="let year of (years$ | async)">{{year}}</option>
+      </select>
+    </div>
   </div>
 </div>
 <div>

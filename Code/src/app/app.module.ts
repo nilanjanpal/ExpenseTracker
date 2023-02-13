@@ -40,6 +40,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-category-graph/annual-expense-category-graph.component';
 import { LoadingComponent } from './shared/loading/loading.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { LoadingComponent } from './shared/loading/loading.component';
     ProfileRoutingModule,
     ChartsModule,
     LayoutModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    HttpClientModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

@@ -73,18 +73,12 @@ export class DashboardComponent implements OnInit {
     this.today = (new Date()).getMonth();
     this.currentMonth$ = this.dashboardService.getCurrentMonth();
 
-    this.store.dispatch(new dashboardActions.StartSixMonthGraphLoading);
     this.store.dispatch(new dashboardActions.StartYearlyGraphLoading);
     this.store.dispatch(new dashboardActions.StartCurrentMonthExpenseCalculation);
 
-    // this.annualGraphLoadingStatus$ = this.store.select(appReducer.getAnnualGraphLoadingStatus);
-    // this.sixMonthGraphLoadingStatus$ = this.store.select(appReducer.getSixMonthGraphLoadingStatus);
     this.isDataUpdateInProgress$ = this.store.select(appReducer.getIsDataUpdateInProgress);
     this.isDataFetchComplete$ = this.store.select(appReducer.getDataFetchStatus);
 
-    // this.previousMonthTotalExpense$ = this.dashboardService.getPreviousMonthTotalExpense();
-    this.lastSixMonthExpenseDetail$ = this.dashboardService.getLastSixMonthExpenseDetail();
-    // this.annualCategoryExpenseDetail$ = this.dashboardService.getAnnualExpenseDetailDefaultCategory();
     this.currentMonthExpense$ = this.dashboardService.getCurrentMonthExpenseDetail();
     this.previousMonthExpense$ = this.dashboardService.getPreviousMonthExpenseDetail();
     this.currentYearExpense$ = this.dashboardService.getCurrentYearExpenseDetail();

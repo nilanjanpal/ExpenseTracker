@@ -22,6 +22,5 @@ export const getDataFetchStatus = createSelector(getDashboardState, state => sta
 export const getExpenseHistory = createSelector(getDashboardState, state => state.expenseHistory);
 export const getCategoryExpenses = createSelector(getDashboardState, state => state.categoryExpenses);
 export const getAnnualGraphLoadingStatus = createSelector(getDashboardState, state => state.isAnnualGraphLoading);
-export const getSixMonthGraphLoadingStatus = createSelector(getDashboardState, state => state.isSixMonthGraphLoading);
 export const getSixMonthExpenseHistory = createSelector(getDashboardState, state => state.sixMonthExpenseHistory);
 export const getIsDataUpdateInProgress = createSelector(getDashboardState, state => state.isDataUpdateInProgress);

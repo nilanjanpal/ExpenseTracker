@@ -38,6 +38,7 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
 
   monthName: string[] = [];
   expense: number[] = [];
+  years$: Observable<String[]>;
   // categorySummarySubscription: Subscription;
   // categorySummaryInitSubscription: Subscription;
   // chartLabelSubscription: Subscription;
@@ -61,10 +62,9 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
             );
             this.series = [
               {
-                name: "Inflation",
+                name: "Expense",
                 data: [...this.expense]
               }];
-            console.log(this.series);
             this.chartOptions = {
               chart: {
                 height: 350,
@@ -119,7 +119,7 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
                 type: "gradient",
                 gradient: {
                   shade: "light",
-                  type: "horizontal",
+                  type: "vertical",
                   shadeIntensity: 0.25,
                   gradientToColors: undefined,
                   inverseColors: true,
@@ -140,7 +140,8 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
                 }
               },
               title: {
-                
+                text: 'Category Analysis',
+                offsetY: -40
               }
             };
           }
@@ -154,6 +155,7 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.categories$ = this.expenseStore.select(appReducer.getCategory);
+    this.years$ = this.dashboardService.getYears();
   }
 
   ngOnDestroy() {
@@ -162,7 +164,7 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
     // this.categorySummarySubscription.unsubscribe();
   }
 
-  onChange(data) {
+  onCategoryChange(data) {
     this.dashboardService.getAnnualExpenseDetailByCategory(data).subscribe(
       (expenseDetail) => {
         this.monthName = [];
@@ -178,6 +180,9 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
         this.chart.updateSeries(this.series);
       }
     );
+    this.years$ = this.dashboardService.getYears();
   }
+
+  onYearChange(data) {}
 
 }
