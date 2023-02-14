@@ -8,6 +8,7 @@ export const getAuthState = createFeatureSelector<AuthState>('auth');
 export const getIsAuthenticated = createSelector(getAuthState, state => state.isAuthenticated);
 export const getUserId = createSelector(getAuthState, state => state.userid);
 export const getIsBufferOn = createSelector(getAuthState, state => state.isBufferOn);
+export const getToken = createSelector(getAuthState, state => state.token);
 
 export const getExpenseState = createFeatureSelector<ExpenseState>('expense');
 export const getCategory = createSelector(getExpenseState, state => state.category);

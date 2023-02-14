@@ -30,6 +30,11 @@ export class AuthService {
     private http: HttpClient) { }
 
   subscription: Subscription;
+  private token: String = '';
+
+  getToken() {
+    return this.token;
+  }
 
   autoLogin() {
     const result = this.cookieService.get('user');
@@ -56,8 +61,9 @@ export class AuthService {
     this.http.post<{ token: string, message: string }>(environment.url + "authenticate", { userName: email, password: password })
       .subscribe(
         (response) => {
+          this.token = response.token;
           if (response.token != "" || response.token != null) {
-            this.http.get<UserDetail>(environment.url + "user/" + email,{headers:{"Authorization":"Bearer "+response.token}})
+            this.http.get<UserDetail>(environment.url + "user/" + email)
               .subscribe(
                 (user) => {
                   const displayName = user.firstName + " " + user.lastName;

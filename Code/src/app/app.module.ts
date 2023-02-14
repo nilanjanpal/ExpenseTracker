@@ -40,7 +40,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-category-graph/annual-expense-category-graph.component';
 import { LoadingComponent } from './shared/loading/loading.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,7 @@ import { HttpClientModule } from '@angular/common/http';
     NgApexchartsModule,
     HttpClientModule
   ],
-  providers: [CookieService],
+  providers: [CookieService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
