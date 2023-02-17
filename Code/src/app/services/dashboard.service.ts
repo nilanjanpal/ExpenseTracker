@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
-import { categoryExpense, DashboardState } from './../store/dashboard.reducer';
+import { AnnualSummary, categoryExpense, DashboardState } from './../store/dashboard.reducer';
 import * as appReducer from './../store/app.reducer';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { ExpenseHistory, ExpenseState } from '../store/expense.reducer';
 import * as dashboardActions from './../store/dashboard.action';
 import { switchMap } from 'rxjs/operators';
-
-
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { ExpenseAggregateDetail } from './../model/expense-aggregate-detail';
 
 @Injectable({
   providedIn: 'root',
@@ -37,14 +38,9 @@ export class DashboardService {
   constructor(
     private angularfire: AngularFirestore,
     private store: Store<DashboardState>,
-    private expenseStore: Store<ExpenseState>
+    private expenseStore: Store<ExpenseState>,
+    private http: HttpClient
   ) {}
-
-  getPreviousMonthTotalExpense() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-    return this.getExpenseDetailByDateRange(startDate, endDate);
-  }
 
   /* 
     Description - Method to fetch expense data between start date and end date passed in the 
@@ -118,62 +114,106 @@ export class DashboardService {
     );
   }
 
-  getTrendingExpenses() {
-    return this.getCurrentYearCategoryExpenseData()
+  getTrendingExpenses():Observable<categoryExpense[]> {
+    return this.store.select(appReducer.getUserId)
     .pipe(
-      map(
-        (data) => {
-          const categoryExpenseData = [... data.categoryExpenseData];
-          categoryExpenseData.sort((a, b) => b.expense - a.expense);
-          const expenseData = categoryExpenseData.slice(0,5);
-          return {categoryExpense:[...expenseData]};
+      switchMap(
+        (id) => {
+          return this.http.get<{_id:string,expense:number}[]>(environment.url+"topFiveExpenses",{params: {"id": id}})
+          .pipe(
+            map((response) => {
+              let expense: categoryExpense[] = [];
+              response.forEach(element => {
+                expense.push({category: element._id, expense: element.expense})
+              });
+              return expense;
+            })
+          )
         }
       )
-    );
+    )
   }
 
-  getExpenseDetailByDateRange(startDate: Date, endDate: Date) {
-    return this.store.select(appReducer.getExpenseHistory)
+  getExpenseDetailByYear(year: string) : Observable<number> {
+    return this.store.select(appReducer.getUserId)
     .pipe(
-      map(
-        (expenseHistoryData) => {
-          let totalExpense: number = 0;
-          expenseHistoryData.map(
-            expenseItem => {
-              if(expenseItem.PurchaseDate >= startDate && expenseItem.PurchaseDate <= endDate) {
-                totalExpense = totalExpense + expenseItem.Price;
-              }
-            }
-          );
-          this.store.dispatch(new dashboardActions.StopCurrentMonthExpenseCalculation);
-          return totalExpense;
+      switchMap(
+        (id) => {
+          return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses",{params: {"id": id, "year": year}})
+          .pipe(
+            map(response => response.expense)
+          )
+        }
+      )
+    )
+  }
+
+  getExpenseMonthonMonth(): Observable<number> {
+    return this.store.select(appReducer.getUserId)
+    .pipe(
+      switchMap(
+        (id) => {
+          return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses/mom",{params:{"id":id}})
+          .pipe(
+            map(response => response.expense)
+          )
+        }
+      )
+    )
+  }
+
+  getExpenseYearonYear(): Observable<number> {
+    return this.store.select(appReducer.getUserId)
+    .pipe(
+      switchMap(
+        (id) => {
+          return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses/yoy",{params:{"id":id}})
+          .pipe(
+            map(response => response.expense)
+          )
+        }
+      )
+    )
+  }
+
+  getExpenseDetailByMonth(year: string, month: string) :Observable<number> {
+    return this.store.select(appReducer.getUserId)
+    .pipe(
+      switchMap(
+        (id) => {
+          return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses/date",{params: {"id": id, "year": year, "month": month}})
+          .pipe(
+            map(response => response.expense)
+          )
         }
       )
     );
   }
 
   getCurrentMonthExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    return this.getExpenseDetailByDateRange(startDate, endDate);
+    const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    const month = date.toLocaleString('en-US', {month: 'long'});
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.getExpenseDetailByMonth(year, month);
   }
 
   getPreviousMonthExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() == 0 ? 11 : new Date().getMonth() -1, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
-    return this.getExpenseDetailByDateRange(startDate, endDate);
+    const date = new Date(new Date().getFullYear(), new Date().getMonth() == 0 ? 11 : new Date().getMonth() -1, 1);
+    const month = date.toLocaleString('en-US', {month: 'long'});
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.getExpenseDetailByMonth(year, month);
   }
 
   getCurrentYearExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), 0, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    return this.getExpenseDetailByDateRange(startDate, endDate);
+    const date = new Date(new Date().getFullYear(), 0, 1);
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.getExpenseDetailByYear(year);
   }
 
   getPreviousYearExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear() - 1, 0, 1);
-    const endDate = new Date(new Date().getFullYear() -1 , 11, 31);
-    return this.getExpenseDetailByDateRange(startDate, endDate);
+    const date = new Date(new Date().getFullYear() - 1, 0, 1);
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.getExpenseDetailByYear(year);
   }
 
 
@@ -204,44 +244,26 @@ export class DashboardService {
     )
   }
   
-  getAnnualExpenseDetailByCategory(category: String) {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    const expenseDetail = [{expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''},
-                           {expense: 0, monthName: ''}];
-    expenseDetail.map(
-      (data, index) => {
-        let monthIndex = (new Date().getMonth() - 11 + index < 0 ) ? (new Date().getMonth() - 11 + index) + 12 : (new Date().getMonth() - 11 + index);
-        data.monthName = this.monthName[monthIndex].monthName;
-      }
-    );
-    return this.store.select(appReducer.getExpenseHistory)
+  getAnnualExpenseDetailByCategory(category: string):Observable<AnnualSummary[]> {
+    const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.store.select(appReducer.getUserId)
     .pipe(
-      map(
-        (expenseHistoryData) => {
-          expenseHistoryData.map(
-            expenseData => {
-              if((expenseData.PurchaseDate > startDate && expenseData.PurchaseDate < endDate) && expenseData.Category == category) {
-                const index = expenseData.PurchaseDate.getMonth();
-                const expenseIndex = expenseDetail.findIndex(data => data.monthName == this.monthName[index].monthName)
-                expenseDetail[expenseIndex].expense = expenseDetail[expenseIndex].expense + Math.round(expenseData.Price); 
-              }
-            }
-          );
-          return [...expenseDetail];
+      switchMap(
+        (id) => {
+          return this.http.get<{date:{year:string,month:string}, expense:number}[]>(environment.url+"expenseCategorySummary",{params:{"id":id, "year": year, "category":category}})
+          .pipe(
+            map(response => {
+              let expense: AnnualSummary[] = [];
+              response.forEach(element => {
+                expense.push({month:element.date.month, amount: element.expense})
+              });
+              return expense;
+            })
+          )
         }
       )
-    );
+    )
   }
 
   /* 
@@ -311,36 +333,26 @@ export class DashboardService {
         lastAnnualExpense - An array of numbers with expense of last twelve months from current 
                             date.
   */
-  getYearlyExpenseDetail() {
-    const startDate = new Date(new Date().getFullYear(), new Date().getMonth() -11, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    const lastAnnualExpense: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    return this.getlastMonthNames(12)
+  getAnnualExpenseDetail(): Observable<AnnualSummary[]> {
+    const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    const year = date.toLocaleString('en-US', {year: 'numeric'});
+    return this.store.select(appReducer.getUserId)
     .pipe(
       switchMap(
-        (months) => {
-          return this.store.select(appReducer.getExpenseHistory)
+        (id) => {
+          return this.http.get<{date:{year:string,month:string}, expense:number}[]>(environment.url+"expenseSummary",{params:{"id":id, "year": year}})
           .pipe(
-            map(
-              expenseData => {
-                expenseData.map(
-                  expenseItem => {
-                    if(expenseItem.PurchaseDate >= startDate && expenseItem.PurchaseDate <= endDate) {
-                      const index = months.indexOf(this.monthName[expenseItem.PurchaseDate.getMonth()].monthName);
-                      lastAnnualExpense[index] = lastAnnualExpense[index] + Math.round(expenseItem.Price);
-                    }
-                  }
-                );
-                return {
-                  months: [...months],
-                  lastAnnualExpense: [...lastAnnualExpense]
-                };
-              }
-            )
+            map(response => {
+              let expense: AnnualSummary[] = [];
+              response.forEach(element => {
+                expense.push({month:element.date.month, amount: element.expense})
+              });
+              return expense;
+            })
           )
         }
       )
-    );
+    )
   }
 
   getlastMonthNames(numberOfMonths): Observable<string[]> {
@@ -374,9 +386,6 @@ export class DashboardService {
     )
   }
 
-  getListOfYears() {
-
-  }
 
   getCategorySummary(categoryName: string) {
     const categorySummary: number[] = [0, 0, 0, 0, 0, 0];

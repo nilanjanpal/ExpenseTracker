@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import * as dashboardActions from './../store/dashboard.action';
 import * as appReducer from './../store/app.reducer';
@@ -29,11 +29,18 @@ export class DashboardComponent implements OnInit {
   lastSixMonthExpenseDetail$: Observable<{sixMonthExpenseSummary: number[], 
                                           categorySummary: number[],
                                           sixMonthTotalExpense: number}>;
-  previousMonthExpense$: Observable<number>;
-  currentMonthExpense$: Observable<number>;
-  currentYearExpense$: Observable<number>;
-  previousYearExpense$: Observable<number>;
+  previousMonthExpense: number;
+  currentMonthExpense: number;
+  currentYearExpense: number;
+  previousYearExpense: number;
+  percentageIncreaseMom: number;
+  percentageIncreaseYoy: number;
+  // previousMonthExpense$: Observable<number>;
+  // currentMonthExpense$: Observable<number>;
+  // currentYearExpense$: Observable<number>;
+  // previousYearExpense$: Observable<number>;
   trendingExpenseData$: Observable<{categoryExpense: categoryExpense[]}>;
+  trendingExpenseData: categoryExpense[];
   months: string[]; 
   lastAnnualExpense: number[];
   categories$: Observable<Category[]>;
@@ -79,21 +86,70 @@ export class DashboardComponent implements OnInit {
     this.isDataUpdateInProgress$ = this.store.select(appReducer.getIsDataUpdateInProgress);
     this.isDataFetchComplete$ = this.store.select(appReducer.getDataFetchStatus);
 
-    this.currentMonthExpense$ = this.dashboardService.getCurrentMonthExpenseDetail();
-    this.previousMonthExpense$ = this.dashboardService.getPreviousMonthExpenseDetail();
-    this.currentYearExpense$ = this.dashboardService.getCurrentYearExpenseDetail();
-    this.previousYearExpense$ = this.dashboardService.getPreviousYearExpenseDetail();
-    this.dashboardService.getYearlyExpenseDetail()
-    .subscribe(
-      expenseDetail => {
-        this.months = [...expenseDetail.months];
-        this.lastAnnualExpense = [...expenseDetail.lastAnnualExpense];
-        this.store.dispatch(new dashboardActions.StopYearlyGraphLoading);
-      }
-    );
+    // this.currentMonthExpense$ = this.dashboardService.getCurrentMonthExpenseDetail();
+    // this.previousMonthExpense$ = this.dashboardService.getPreviousMonthExpenseDetail();
+    // this.currentYearExpense$ = this.dashboardService.getCurrentYearExpenseDetail();
+    // this.previousYearExpense$ = this.dashboardService.getPreviousYearExpenseDetail();
+    // this.dashboardService.getYearlyExpenseDetail()
+    // .subscribe(
+    //   expenseDetail => {
+    //     this.months = [...expenseDetail.months];
+    //     this.lastAnnualExpense = [...expenseDetail.lastAnnualExpense];
+    //     this.store.dispatch(new dashboardActions.StopYearlyGraphLoading);
+    //   }
+    // );
     this.categories$ = this.expenseStore.select(appReducer.getCategory);
     this.allMonths$ = this.dashboardService.getAllMonths();
-    this.trendingExpenseData$ = this.dashboardService.getTrendingExpenses();
+    // this.trendingExpenseData$ = this.dashboardService.getTrendingExpenses();
+  }
+
+  ngAfterViewInit() {
+
+    this.dashboardService.getCurrentMonthExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => {
+        this.currentMonthExpense = data;
+      }
+    );
+
+    this.dashboardService.getPreviousMonthExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => {
+        this.previousMonthExpense = data;
+      }
+    );
+
+    this.dashboardService.getCurrentYearExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => {
+        this.currentYearExpense = data;
+      }
+    );
+
+    this.dashboardService.getPreviousYearExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => {
+        this.previousYearExpense = data;
+      }
+    )
+
+    this.dashboardService.getExpenseYearonYear()
+    .pipe(take(1))
+    .subscribe(data => this.percentageIncreaseYoy = data)
+
+    this.dashboardService.getExpenseMonthonMonth()
+    .pipe(take(1))
+    .subscribe(data => this.percentageIncreaseMom = data)
+
+    this.dashboardService.getTrendingExpenses()
+    .pipe(take(1))
+    .subscribe(data => {
+      this.trendingExpenseData = data;
+    })
   }
 
   onMonthChange(data) {
