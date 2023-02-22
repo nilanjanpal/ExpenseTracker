@@ -23,7 +23,7 @@ export type ChartOptions = {
   templateUrl: './yearly-expense-graph.component.html',
   styleUrls: ['./yearly-expense-graph.component.css']
 })
-export class YearlyExpenseGraphComponent implements OnInit, OnChanges {
+export class YearlyExpenseGraphComponent implements OnInit {
   
   annualExpense: number[] = [];
   months: string[] = [];
@@ -34,9 +34,7 @@ export class YearlyExpenseGraphComponent implements OnInit, OnChanges {
  
   constructor(private dashboardService: DashboardService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    
-  }
+
   
   ngOnInit(): void {
     this.dashboardService.getAnnualExpenseDetail()

@@ -69,6 +69,7 @@ export class AuthService {
                   const displayName = user.firstName + " " + user.lastName;
                   this.store.dispatch(new authActions.StopBuffer());
                   this.store.dispatch(new authActions.Authenticate(user.id, displayName));
+                  this.dashboardService.initLoadData();
                   this.router.navigate(['/dashboard']);
                 },
                 (error) => {
@@ -80,38 +81,6 @@ export class AuthService {
           }
         }
       );
-    // this.afAuth.signInWithEmailAndPassword(email, password)
-    // .then(
-    //     (result) => {
-    //       // console.log(result);
-    //       // console.log(result.user.uid);
-    //       // console.log(result.user.displayName);
-    //       const displayName = result.user.displayName;
-    //       this.expenseService.getCategories().then(
-    //         () => {
-    //           const userId = result.user.uid;
-    //           this.store.dispatch(new authActions.StopBuffer());
-    //           this.store.dispatch(new authActions.Authenticate(userId, displayName));
-    //           this.dashboardService.setExpenseDetail().then(
-    //             (result) => {
-    //               if(result) {
-    //                 this.router.navigate(['/dashboard']);
-    //               }
-    //             }
-    //           );
-    //           this.cookieService.set('user', JSON.stringify(result));
-    //           this.store.dispatch(new authActions.StopAuthentication());
-    //         }
-    //       );
-    //     }
-    // )
-    // .catch(
-    //         error => {
-    //             this.snackbar.open(error, 'Dismiss', {duration: 5000});
-    //             this.store.dispatch(new authActions.StopBuffer());
-    //             this.store.dispatch(new authActions.StopAuthentication());
-    //         }
-    // );
   }
 
   signup(userDetail): void {

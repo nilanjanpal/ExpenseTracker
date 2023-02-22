@@ -17,6 +17,7 @@ import {
 } from "ng-apexcharts";
 import { Store } from '@ngrx/store';
 import { Category, ExpenseState } from 'src/app/store/expense.reducer';
+import { take } from 'rxjs/operators';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -46,7 +47,8 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
   @ViewChild("chart") chart: ChartComponent;
   chartOptions: Partial<ChartOptions>;
   series: ApexAxisChartSeries;
-  categories$: Observable<Category[]>;
+  // categories$: Observable<Category[]>;
+  categories: Category[];
   
   constructor(private dashboardService: DashboardService,
               private expenseStore: Store<ExpenseState>) { 
@@ -147,8 +149,13 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
 }
 
   ngOnInit(): void {
-    this.categories$ = this.expenseStore.select(appReducer.getCategory);
-    this.years$ = this.dashboardService.getYears();
+    // this.categories$ = this.expenseStore.select(appReducer.getCategory);
+    // this.years$ = this.dashboardService.getYears();
+    this.dashboardService.getCategories()
+    .pipe(take(1))
+    .subscribe(
+      categories => this.categories = categories
+    )
   }
 
   ngOnDestroy() {
@@ -159,21 +166,35 @@ export class YearlyExpenseCategoryGraphComponent implements OnInit, OnDestroy {
 
   onCategoryChange(data) {
     this.dashboardService.getAnnualExpenseDetailByCategory(data).subscribe(
-      (expenseDetail) => {
+      expenseDetail => {
         this.monthName = [];
         this.expense = [];
         expenseDetail.map(
-          (expense) => {
+          expense => {
             this.monthName.push(expense.month);
             this.expense.push(expense.amount);
-            
           }
-        );
+        )
         this.series[0].data = [...this.expense];
         this.chart.updateSeries(this.series);
       }
     );
-    this.years$ = this.dashboardService.getYears();
+    // this.dashboardService.getAnnualExpenseDetailByCategory(data).subscribe(
+    //   (expenseDetail) => {
+    //     this.monthName = [];
+    //     this.expense = [];
+    //     expenseDetail.map(
+    //       (expense) => {
+    //         this.monthName.push(expense.month);
+    //         this.expense.push(expense.amount);
+            
+    //       }
+    //     );
+    //     this.series[0].data = [...this.expense];
+    //     this.chart.updateSeries(this.series);
+    //   }
+    // );
+    // this.years$ = this.dashboardService.getYears();
   }
 
   onYearChange(data) {}

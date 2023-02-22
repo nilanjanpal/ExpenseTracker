@@ -4,7 +4,7 @@
     <div >
       <label style="color: darkblue; margin-right: 15px;">Category</label>
       <select name="category" id="category" (change)="onCategoryChange($event.target.value)">
-        <option [value]=category.Name *ngFor="let category of (categories$ | async)">{{category.Name}}</option>
+        <option [value]=category.Name *ngFor="let category of categories">{{category.Name}}</option>
       </select>
     </div>
     <div>

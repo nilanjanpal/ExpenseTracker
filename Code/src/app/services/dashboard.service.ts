@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
-import { AnnualSummary, categoryExpense, DashboardState } from './../store/dashboard.reducer';
+import { ExpenseDetail, CategoryExpense, DashboardState } from './../store/dashboard.reducer';
 import * as appReducer from './../store/app.reducer';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { ExpenseHistory, ExpenseState } from '../store/expense.reducer';
+import { Category, ExpenseHistory, ExpenseState } from '../store/expense.reducer';
 import * as dashboardActions from './../store/dashboard.action';
 import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -42,6 +42,78 @@ export class DashboardService {
     private http: HttpClient
   ) {}
 
+  initLoadData() {
+    this.store.dispatch(new dashboardActions.StartAnnualExpenseGraphLoading);
+    this.store.dispatch(new dashboardActions.StartCategoryExpenseGraphLoading);
+
+    this.getCurrentMonthExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetCurrentMonthExpense(data))
+    );
+
+    this.getPreviousMonthExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetPreviousMonthExpense(data))
+    );
+
+    this.getCurrentYearExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetCurrentYearExpense(data))
+    );
+    
+    this.getPreviousYearExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetPreviousYearExpense(data))
+    );
+
+    this.getExpenseMonthonMonth()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetExpenseMonthonMonth(data))
+    );
+
+    this.getExpenseYearonYear()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetExpenseYearonYear(data))
+    );
+
+    this.getTrendingExpenses()
+    .pipe(take(1))
+    .subscribe(
+      data => this.store.dispatch(new dashboardActions.SetTrendingExpenses(data))
+    );
+
+    this.getCategories()
+    .pipe(take(1))
+    .subscribe(
+      (data:Category[]) => {
+        this.store.dispatch(new dashboardActions.SetCategories(data));
+        this.getAnnualExpenseDetailByCategory(data[0].Name)
+        .pipe(take(1))
+        .subscribe(
+          data => {
+            this.store.dispatch(new dashboardActions.SetCategoryExpenseDetail(data));
+            this.store.dispatch(new dashboardActions.StopCategoryExpenseGraphLoading);
+          }
+        );
+      }
+    );
+
+    this.getAnnualExpenseDetail()
+    .pipe(take(1))
+    .subscribe(
+      data => {
+        this.store.dispatch(new dashboardActions.SetAnnualExpenseDetail(data));
+        this.store.dispatch(new dashboardActions.StopAnnualExpenseGraphLoading);
+      }
+    );
+  }
+
   /* 
     Description - Method to fetch expense data between start date and end date passed in the 
                   parameters .
@@ -66,7 +138,7 @@ export class DashboardService {
             .snapshotChanges()
             .pipe(
               map((result) => {
-                const categoryExpenseData: categoryExpense[] = [];
+                const CategoryExpenseData: CategoryExpense[] = [];
                 result.map((result) => {
                   const id = result.payload.doc.id;
                   const data = result.payload.doc.data() as ExpenseHistory;
@@ -74,47 +146,22 @@ export class DashboardService {
                   data.PurchaseDate = result.payload.doc
                     .get('PurchaseDate')
                     .toDate();
-                  const categoryIndex = categoryExpenseData.findIndex((result) => data.Category == result.category );
+                  const categoryIndex = CategoryExpenseData.findIndex((result) => data.Category == result.category );
                   if(categoryIndex == -1) {
-                    categoryExpenseData.push({category: data.Category, expense: data.Price});
+                    CategoryExpenseData.push({category: data.Category, expense: data.Price});
                   }
                   else {
-                    categoryExpenseData[categoryIndex].expense = categoryExpenseData[categoryIndex].expense + data.Price;
+                    CategoryExpenseData[categoryIndex].expense = CategoryExpenseData[categoryIndex].expense + data.Price;
                   }
                 });
-                return {totalExpense: categoryExpenseData.reduce((acc, price) => acc + price.expense, 0)}
+                return {totalExpense: CategoryExpenseData.reduce((acc, price) => acc + price.expense, 0)}
               })
             )
           }
       ));
   }
 
-  getCurrentYearCategoryExpenseData() {
-    const startDate = new Date(new Date().getFullYear(), 0, 1);
-    const endDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    return this.getExpenseHistoryDetailByDateRange(startDate, endDate)
-    .pipe(
-      map(
-        (result) => {
-          const categoryExpenseData: categoryExpense[] = [];
-          result.expenseDetail.map(
-            expenseData => {
-              const categoryIndex = categoryExpenseData.findIndex((categoryResult) => expenseData.Category == categoryResult.category );
-              if(categoryIndex == -1) {
-                categoryExpenseData.push({category: expenseData.Category, expense: expenseData.Price});
-              }
-              else {
-                categoryExpenseData[categoryIndex].expense = categoryExpenseData[categoryIndex].expense + expenseData.Price;
-              }
-            }
-          );
-          return {categoryExpenseData: categoryExpenseData};
-        }
-      )
-    );
-  }
-
-  getTrendingExpenses():Observable<categoryExpense[]> {
+  getTrendingExpenses():Observable<CategoryExpense[]> {
     return this.store.select(appReducer.getUserId)
     .pipe(
       switchMap(
@@ -122,7 +169,7 @@ export class DashboardService {
           return this.http.get<{_id:string,expense:number}[]>(environment.url+"topFiveExpenses",{params: {"id": id}})
           .pipe(
             map((response) => {
-              let expense: categoryExpense[] = [];
+              let expense: CategoryExpense[] = [];
               response.forEach(element => {
                 expense.push({category: element._id, expense: element.expense})
               });
@@ -224,27 +271,22 @@ export class DashboardService {
     return annualExpenseDetail$;
   }
 
-  getYears() {
-    const years: string[] = [''];
-    return this.store.select(appReducer.getExpenseHistory)
+  getCategories(): Observable<Category[]> {
+    return this.http.get<{id: string,name: string, description: string}[]>(environment.url+"categories")
     .pipe(
       map(
-        (expenseHistory) => {
-          expenseHistory.map(
-            expenseData => {
-              let expenseYear = expenseData.PurchaseDate.getFullYear();
-              if(years.findIndex(year => parseInt(year) == expenseYear) == -1) {
-                years.push(expenseYear.toString());
-              }
-            }
-          );
-          return years;
+        response => {
+          let categories :Category[] = [];
+          response.forEach(element => {
+            categories.push({Name:element.name, Description:element.description});  
+          });
+          return categories;
         }
       )
     )
   }
   
-  getAnnualExpenseDetailByCategory(category: string):Observable<AnnualSummary[]> {
+  getAnnualExpenseDetailByCategory(category: string):Observable<ExpenseDetail[]> {
     const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
     const year = date.toLocaleString('en-US', {year: 'numeric'});
     return this.store.select(appReducer.getUserId)
@@ -254,7 +296,7 @@ export class DashboardService {
           return this.http.get<{date:{year:string,month:string}, expense:number}[]>(environment.url+"expenseCategorySummary",{params:{"id":id, "year": year, "category":category}})
           .pipe(
             map(response => {
-              let expense: AnnualSummary[] = [];
+              let expense: ExpenseDetail[] = [];
               response.forEach(element => {
                 expense.push({month:element.date.month, amount: element.expense})
               });
@@ -315,7 +357,7 @@ export class DashboardService {
         .pipe(take(1))
         .subscribe(
           (expenseData) => {
-            this.store.dispatch(new dashboardActions.SetExpenseHistory(expenseData.expenseDetail));
+            // this.store.dispatch(new dashboardActions.SetExpenseHistory(expenseData.expenseDetail));
           }
         );
         resolve(true);
@@ -333,7 +375,7 @@ export class DashboardService {
         lastAnnualExpense - An array of numbers with expense of last twelve months from current 
                             date.
   */
-  getAnnualExpenseDetail(): Observable<AnnualSummary[]> {
+  getAnnualExpenseDetail(): Observable<ExpenseDetail[]> {
     const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
     const year = date.toLocaleString('en-US', {year: 'numeric'});
     return this.store.select(appReducer.getUserId)
@@ -343,7 +385,7 @@ export class DashboardService {
           return this.http.get<{date:{year:string,month:string}, expense:number}[]>(environment.url+"expenseSummary",{params:{"id":id, "year": year}})
           .pipe(
             map(response => {
-              let expense: AnnualSummary[] = [];
+              let expense: ExpenseDetail[] = [];
               response.forEach(element => {
                 expense.push({month:element.date.month, amount: element.expense})
               });
@@ -387,44 +429,44 @@ export class DashboardService {
   }
 
 
-  getCategorySummary(categoryName: string) {
+  hegetCategorySummary(categoryName: string) {
     const categorySummary: number[] = [0, 0, 0, 0, 0, 0];
     const currentMonthIndex = new Date().getMonth();
-    return this.store.select(appReducer.getSixMonthExpenseHistory)
-    .pipe(
-      map(
-        (data) => {
-          data.map(
-            (expenseItem) => {
-              switch (expenseItem.PurchaseDate.getMonth()) {
-                case this.monthName[this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex].previousIndex:
-                  categorySummary[0] = expenseItem.Category == categoryName ? categorySummary[0] + expenseItem.Price : categorySummary[0];
-                  break;
-                case this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex:
-                  categorySummary[1] = expenseItem.Category == categoryName ? categorySummary[1] + expenseItem.Price : categorySummary[1];
-                  break;
-                case this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex:
-                  categorySummary[2] = expenseItem.Category == categoryName ? categorySummary[2] + expenseItem.Price : categorySummary[2];
-                  break;
-                case this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex:
-                  categorySummary[3] = expenseItem.Category == categoryName ? categorySummary[3] + expenseItem.Price : categorySummary[3];
-                  break;
-                case this.monthName[currentMonthIndex].previousIndex:
-                  categorySummary[4] = expenseItem.Category == categoryName ? categorySummary[4] + expenseItem.Price : categorySummary[4];
-                  break;
-                case currentMonthIndex:
-                  categorySummary[5] = expenseItem.Category == categoryName ? categorySummary[5] + expenseItem.Price : categorySummary[5];
-                  break;
-              }
-            }
-          );
-          return [... categorySummary];
-        }
-      ),
-      take(1)
-    )
-    .subscribe(
-      (categorySummary) => this.categoryChangeEvent.next(categorySummary)
-    );
+    // return this.store.select(appReducer.getSixMonthExpenseHistory)
+    // .pipe(
+    //   map(
+    //     (data) => {
+    //       data.map(
+    //         (expenseItem) => {
+    //           switch (expenseItem.PurchaseDate.getMonth()) {
+    //             case this.monthName[this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+    //               categorySummary[0] = expenseItem.Category == categoryName ? categorySummary[0] + expenseItem.Price : categorySummary[0];
+    //               break;
+    //             case this.monthName[this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex].previousIndex:
+    //               categorySummary[1] = expenseItem.Category == categoryName ? categorySummary[1] + expenseItem.Price : categorySummary[1];
+    //               break;
+    //             case this.monthName[this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex].previousIndex:
+    //               categorySummary[2] = expenseItem.Category == categoryName ? categorySummary[2] + expenseItem.Price : categorySummary[2];
+    //               break;
+    //             case this.monthName[this.monthName[currentMonthIndex].previousIndex].previousIndex:
+    //               categorySummary[3] = expenseItem.Category == categoryName ? categorySummary[3] + expenseItem.Price : categorySummary[3];
+    //               break;
+    //             case this.monthName[currentMonthIndex].previousIndex:
+    //               categorySummary[4] = expenseItem.Category == categoryName ? categorySummary[4] + expenseItem.Price : categorySummary[4];
+    //               break;
+    //             case currentMonthIndex:
+    //               categorySummary[5] = expenseItem.Category == categoryName ? categorySummary[5] + expenseItem.Price : categorySummary[5];
+    //               break;
+    //           }
+    //         }
+    //       );
+    //       return [... categorySummary];
+    //     }
+    //   ),
+    //   take(1)
+    // )
+    // .subscribe(
+    //   (categorySummary) => this.categoryChangeEvent.next(categorySummary)
+    // );
   }
 }
