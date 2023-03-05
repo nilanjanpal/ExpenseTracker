@@ -21,7 +21,7 @@ export class NewExpenseComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.categories$ = this.store.select(appReducer.getCategory);
+    this.categories$ = this.store.select(appReducer.getCategories);
   }
 
   initForm() {
@@ -51,5 +51,6 @@ export class NewExpenseComponent implements OnInit {
     for(let i=0; i<expenseItemArrayLength; i++){
       this.onDelete(i);
     }
+    this.expenseService.expenseTabSelect.next(0);
   }
 }

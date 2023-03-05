@@ -11,12 +11,13 @@ export const getIsBufferOn = createSelector(getAuthState, state => state.isBuffe
 export const getToken = createSelector(getAuthState, state => state.token);
 
 export const getExpenseState = createFeatureSelector<ExpenseState>('expense');
-export const getCategory = createSelector(getExpenseState, state => state.category);
 export const getExpenses = createSelector(getExpenseState, state => state.expenseHistory);
 export const getDisplayedColumns = createSelector(getExpenseState, state => state.displayedColumns);
 export const getEditMode = createSelector(getExpenseState, state => state.isEditModeOn);
 export const getEditElement = createSelector(getExpenseState, state => state.editExpense);
 export const getExpenseLoading = createSelector(getExpenseState, state => state.isExpenseLoading);
+export const getStartDate = createSelector(getExpenseState, state => state.searchStartDate);
+export const getEndDate = createSelector(getExpenseState, state => state.searchEndDate);
 
 export const getDashboardState = createFeatureSelector<DashboardState>('dashboard');
 export const getAnnualGraphLoadingStatus = createSelector(getDashboardState, state => state.isAnnualExpenseGraphLoading);

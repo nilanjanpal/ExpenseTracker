@@ -4,8 +4,8 @@
         <ng-container matColumnDef="itemName">
             <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutGap="10px">
-                {{ element.ItemName }}
-                <span *ngIf="element.isEdited" class="font">(edited)</span>
+                {{ element.itemName }}
+                <span *ngIf="element.edited" class="font">(edited)</span>
                 <!-- <div fxFlex fxLayoutAlign="flex-end">
                     <span *ngIf="element.isEdited" class="font">* Edited</span>
                 </div> -->
@@ -13,21 +13,21 @@
         </ng-container>
         <ng-container matColumnDef="price">
             <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.Price }}</mat-cell>
+            <mat-cell *matCellDef="let element">{{ element.price }}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="purchaseDate">
             <mat-header-cell *matHeaderCellDef>Purchase Date</mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element.PurchaseDate | date: 'dd-MM-yyyy' }}</mat-cell>
+            <mat-cell *matCellDef="let element">{{ element.purchaseDate | date: 'dd-MM-yyyy' }}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="category">
             <mat-header-cell *matHeaderCellDef>Category</mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayout>
-                {{ element.Category }}
+                {{ element.category }}
                 <div fxFlex fxLayout="row" fxLayoutGap=5px fxLayoutAlign="flex-end">
                     <!-- <mat-icon *ngIf="element.isEdited" class="iconSize" matTooltip="Item has been edited" color="primary">info</mat-icon> -->
-                    <mat-icon *ngIf="element.Comment !== ''" class="iconSize" matTooltip="Click to check comments" color="primary" (click)="openComment(element.Comment)">class</mat-icon>
+                    <mat-icon *ngIf="element.comment !== ''" class="iconSize" matTooltip="Click to check comments" color="primary" (click)="openComment(element.comment)">class</mat-icon>
                     <mat-icon matTooltip="Edit expense item" class="iconSize" color="primary" (click)="onEdit(element)">edit</mat-icon>
-                    <mat-icon matTooltip="Delete Expense item" class="iconSize" color="warn" (click)="confirmDelete(element.ExpenseId)">delete_outline</mat-icon>
+                    <mat-icon matTooltip="Delete Expense item" class="iconSize" color="warn" (click)="confirmDelete(element.id)">delete_outline</mat-icon>
                 </div>
             </mat-cell>
         </ng-container>

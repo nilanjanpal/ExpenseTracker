@@ -9,6 +9,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../store/expense.action';
 import { NgForm } from '@angular/forms';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-expense-history',
@@ -32,12 +33,20 @@ export class ExpenseHistoryComponent implements AfterViewInit, OnInit {
 
   constructor(private expenseService: ExpenseService,
     private store: Store<ExpenseState>,
-    private matDialog: MatDialog) { }
+    private matDialog: MatDialog) {
+      this.store.dispatch(new expenseActions.SetLoadingOn);
+  }
 
   ngOnInit(): void {
     this.startDate = new Date((new Date()).getFullYear(), (new Date()).getMonth(), 1);
     this.endDate = new Date((new Date()).getFullYear(), (new Date()).getMonth() + 1, 0);
     this.isLoading$ = this.store.select(appReducer.getExpenseLoading);
+    this.displayedColumn$ = this.store.select(appReducer.getDisplayedColumns);
+    // Below subscription need to be unsubscribed else will be too many subscription
+    this.store.select(appReducer.getExpenses)
+    .subscribe(
+      data => this.datasource.data = [...data]
+    )
   }
 
   ngAfterViewInit(): void {
@@ -50,11 +59,18 @@ export class ExpenseHistoryComponent implements AfterViewInit, OnInit {
     );
   }
 
+  // ngAfterContentInit() {
+  //   // console.log('ngDoCheck');
+  //   this.store.select(appReducer.getExpenses)
+  //   .subscribe(
+  //     data => this.datasource.data = [...data]
+  //   )
+  // }
+
 
   filterData() {
     let startDate: Date;
     let endDate: Date;
-    this.store.dispatch(new expenseActions.SetLoadingOn);
     if (this.searchForm !== undefined) {
       startDate = this.searchForm.value.startDate === undefined ? this.startDate : this.searchForm.value.startDate;
       endDate = this.searchForm.value.endDate === undefined ? this.endDate : this.searchForm.value.endDate;
@@ -63,18 +79,7 @@ export class ExpenseHistoryComponent implements AfterViewInit, OnInit {
       startDate = this.startDate;
       endDate = this.endDate;
     }
-    this.expenseService.getExpenses(startDate, endDate).then(
-      () => {
-        this.displayedColumn$ = this.store.select(appReducer.getDisplayedColumns);
-        if (this.subscription !== undefined) {
-          this.subscription.unsubscribe();
-        }
-        this.subscription = this.store.select(appReducer.getExpenses).subscribe(
-          expenses => {
-            this.datasource.data = [...expenses];
-            this.store.dispatch(new expenseActions.SetLoadingOff);
-          }
-        );
-      });
+    this.store.dispatch(new expenseActions.SetSearchDate(startDate, endDate));
+    this.expenseService.refreshExpenses();
   }
 }

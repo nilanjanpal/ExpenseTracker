@@ -3,12 +3,17 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as expenseActions from './../store/expense.action';
 import * as appReducer from './../store/app.reducer';
-import { Subject,  Subscription } from 'rxjs';
+import { Observable, Subject,  Subscription } from 'rxjs';
 import { ExpenseHistory } from './../store/expense.reducer';
-import { map, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { DashboardService } from './dashboard.service';
 import { DashboardState } from '../store/dashboard.reducer';
 import * as dashboardActions from './../store/dashboard.action';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
+import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
     providedIn: 'root',
@@ -18,118 +23,147 @@ export class ExpenseService {
     expenseTabSelect = new Subject<number>();
     subscription: Subscription[] = [];
 
-    constructor(private firestore: AngularFirestore,
-                private store: Store<{ Name: string, Description: string }>,
-                private dashboardStore: Store<DashboardState>,
-                private dashboardService: DashboardService) { }
-
-    getCategories(): Promise<void> {
-        return new Promise(
-            (resolve) => {
-                this.subscription.push(this.firestore.collection('Category').valueChanges()
-                .pipe(take(1))
-                .subscribe(
-                    (result: { Name, Description }[]) => {
-                        this.store.dispatch(new expenseActions.FetchCategories(result));
-                        resolve();
-                    }
-                ));
-            }
-        );
-    }
+    constructor(private store: Store<{ Name: string, Description: string }>,
+                private http: HttpClient,
+                private dashboardService: DashboardService,
+                private snackbar: MatSnackBar) { }
 
     saveExpenses(expenseItems): void {
+        let expenseHistory: ExpenseHistory[] = [];
         this.store.select(appReducer.getUserId).subscribe(
             userId => {
                 expenseItems.map(
                     item => {
-                        this.firestore.collection('ExpenseHistory').add({
-                            ItemName: item.itemName,
-                            Price: item.itemPrice,
-                            PurchaseDate: item.purchaseDate,
-                            Category: item.category,
-                            Comment: item.comment,
-                            UserId: userId,
-                            isEdited: false
-                        });
+                        const expenseItem: ExpenseHistory = {
+                            id: null,
+                            userId: userId,
+                            itemName: item.itemName,
+                            comment: item.comment,
+                            purchaseDate: item.purchaseDate,
+                            category: item.category,
+                            price: item.itemPrice,
+                            edited: false
+                        }
+                        expenseHistory.push(expenseItem);
                     }
                 );
-                this.dashboardService.setExpenseDetail().then(
+                this.http.post(environment.url+"expenses",expenseHistory)
+                .pipe(take(1))
+                .subscribe(
                     () => {
-                        this.expenseTabSelect.next(0);
+                        this.refreshExpenses();
+                        this.dashboardService.refreshData();
+                        this.snackbar.open("Added successfully", 'Dismiss', { duration: 5000 });
+                        // console.log('Insert complete successfully');
                     }
-                );
+                )
+                // this.dashboardService.setExpenseDetail().then(
+                //     () => {
+                //         this.expenseTabSelect.next(0);
+                //     }
+                // );
             }
         );
     }
-
-    getExpenses(startDate: Date, endDate: Date): Promise<void> {
-        return new Promise(
-            (resolve) => {
-                this.subscription.push(this.store.select(appReducer.getUserId).subscribe(
-                    userId => {
-                        this.subscription.push(this.firestore.collection('ExpenseHistory', ref => {
-                                                                                            return ref
-                                                                                                    .where('UserId', '==', userId)
-                                                                                                    .where('PurchaseDate', '>=', startDate)
-                                                                                                    .where('PurchaseDate', '<=', endDate);
-                                                                                                })
-                            .snapshotChanges()
-                            .pipe(
-                                map(
-                                    result => {
-                                        return result.map(
-                                            (res) => {
-                                                const id = res.payload.doc.id;
-                                                const data = res.payload.doc.data() as ExpenseHistory;
-                                                data.ExpenseId = id;
-                                                data.PurchaseDate = res.payload.doc.get('PurchaseDate').toDate();
-                                                return { ...data };
-                                            }
-                                        );
-                                    }
-                                )
-                            )
-                            .subscribe(
-                                (result: ExpenseHistory[]) => {
-                                    this.store.dispatch(new expenseActions.SetExpenseData([...result]));
-                                    resolve();
-                                }
-                            ));
+    
+    refreshExpenses() {
+        let startDate: string;
+        let endDate: string;
+        this.store.select(appReducer.getStartDate)
+        .pipe(take(1))
+        .subscribe(
+            (date: Date) => {
+                startDate = date.toDateString();
+                this.store.select(appReducer.getEndDate)
+                .pipe(take(1))
+                .subscribe(
+                    (date: Date) => {
+                        endDate = date.toDateString();
+                        if(startDate === "" && endDate === "") {
+                            startDate = (new Date((new Date()).getFullYear(), (new Date()).getMonth(), 1)).toDateString();
+                            endDate = (new Date((new Date()).getFullYear(), (new Date()).getMonth() + 1, 0)).toDateString();
+                        }
+                        this.getExpenses(startDate, endDate)
+                        .subscribe(
+                        (data:ExpenseHistory[]) => {
+                            this.store.dispatch(new expenseActions.SetExpenseData(data));
+                            this.store.dispatch(new expenseActions.SetLoadingOff);
+                        });
                     }
-                ));
+                )
             }
-        );
+        )
+    }
+
+    getExpenses(startDate: string, endDate: string): Observable<ExpenseHistory[]> {
+        return this.store.select(appReducer.getUserId)
+        .pipe(
+            switchMap(
+                (id) => {
+                    return this.http.get<{id:string, userId:string, itemName: string, comment: string, purchaseDate: string, category: string, price: number, edited: boolean}[]>(environment.url+"expenses", {params: {"id": id, "startDate": startDate, "endDate": endDate}})
+                    .pipe(
+                        map(
+                            data => {
+                                let expense: ExpenseHistory[] = [];
+                                data.map(
+                                    element => {
+                                        expense.push({
+                                            id: element.id,
+                                            userId: element.userId,
+                                            itemName: element.itemName,
+                                            comment: element.comment,
+                                            purchaseDate: new Date(element.purchaseDate),
+                                            category: element.category,
+                                            price: element.price,
+                                            edited: element.edited
+                                        });
+                                    }
+                                );
+                                return expense;
+                            }
+                        )
+                    )
+                }
+            )
+        )
     }
 
     deleteExpense(expenseId: string): void {
-        this.firestore.collection('ExpenseHistory').doc(expenseId).delete();
-        this.dashboardService.setExpenseDetail().then(
-            () => {
-                this.expenseTabSelect.next(0);
-            }
-        );
-    }
-
-    updateExpense(expense: ExpenseHistory): void {
-        this.firestore.collection('ExpenseHistory').doc(expense.ExpenseId)
-        .update({ ItemName: expense.ItemName,
-                  Category: expense.Category,
-                  Comment: expense.Comment,
-                  PurchaseDate: expense.PurchaseDate,
-                  Price: expense.Price,
-                  isEdited: expense.isEdited})
-        .then(
-            () => {
-                this.expenseTabSelect.next(0);
-                this.store.dispatch(new expenseActions.SetEditModeOff());
-                this.dashboardService.setExpenseDetail().then(
+        this.store.select(appReducer.getUserId)
+        .pipe(take(1))
+        .subscribe(
+            (id) => {
+                this.http.delete(environment.url+"expenses", {params:{"expenseId":expenseId}})
+                .pipe(take(1))
+                .subscribe(
                     () => {
-                        this.expenseTabSelect.next(0);
+                        this.refreshExpenses();
+                        this.dashboardService.refreshData();
+                        console.log("Item deleted");
                     }
                 );
             }
-        );
+        )
+    }
+
+    updateExpense(expense: ExpenseHistory): void {
+        this.store.select(appReducer.getUserId)
+        .pipe(take(1))
+        .subscribe(
+            id => {
+                expense.userId = id;
+                this.http.post(environment.url+"expense",expense)
+                .pipe(take(1))
+                .subscribe(
+                    () => {
+                        this.refreshExpenses();
+                        this.store.dispatch(new expenseActions.SetEditModeOff());
+                        this.dashboardService.refreshData();
+                        console.log('Update complete successfully');
+                    }
+                )
+            }
+        )
     }
 
 }

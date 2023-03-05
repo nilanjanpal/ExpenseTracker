@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Category, ExpenseState, ExpenseHistory } from 'src/app/store/expense.reducer';
 import { Store } from '@ngrx/store';
 import * as appReducer from './../../store/app.reducer';
@@ -23,23 +23,24 @@ export class EditExpenseComponent implements OnInit {
               private expenseService: ExpenseService) { }
 
   ngOnInit(): void {
-    this.categories$ = this.store.select(appReducer.getCategory);
+    this.categories$ = this.store.select(appReducer.getCategories);
     this.expense$ = this.store.select(appReducer.getEditElement);
   }
 
   onSave() {
     let expenseId = '';
     this.expense$.subscribe(
-      expense => expenseId = expense.ExpenseId
+      expense => expenseId = expense.id
     );
-    this.expenseService.updateExpense({ExpenseId: expenseId, 
-                                       ItemName: this.editForm.value.ItemName,
-                                       Price: this.editForm.value.Price,
-                                       Category: this.editForm.value.Category,
-                                       Comment: this.editForm.value.Comment,
-                                       PurchaseDate: this.editForm.value.PurchaseDate,
-                                       isEdited: true});
-
+    this.expenseService.updateExpense({id: expenseId, 
+                                       userId: this.editForm.value.userId,
+                                       itemName: this.editForm.value.ItemName,
+                                       price: this.editForm.value.Price,
+                                       category: this.editForm.value.Category,
+                                       comment: this.editForm.value.Comment,
+                                       purchaseDate: this.editForm.value.PurchaseDate,
+                                       edited: true});
+    this.expenseService.expenseTabSelect.next(0);
   }
 
   onCancel() {

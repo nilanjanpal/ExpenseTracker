@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../../store/expense.action';
+import * as appReducer from './../../../store/app.reducer';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
@@ -17,12 +18,12 @@ import { MatPaginator } from '@angular/material/paginator';
 export class ExpenseTableComponent implements AfterViewInit {
 
   @Input() displayedColumn$: Observable<string[]>;
-  @Input() datasource = new MatTableDataSource<ExpenseHistory>();
+  @Input() datasource: MatTableDataSource<ExpenseHistory>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private expenseService: ExpenseService,
               private store: Store<ExpenseState>,
-              private matDialog: MatDialog) { }
+              private matDialog: MatDialog) {}
 
   ngAfterViewInit(): void {
     this.datasource.paginator = this.paginator;

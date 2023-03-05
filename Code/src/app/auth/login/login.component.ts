@@ -6,7 +6,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { AuthState } from 'src/app/store/auth.reducer';
 import * as appReducer from './../../store/app.reducer';
 import { Observable } from 'rxjs';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { CookieService } from 'ngx-cookie-service';
 
 @Component({
@@ -21,7 +20,6 @@ export class LoginComponent implements OnInit {
   constructor(private route: Router,
               private authService: AuthService,
               private store: Store<AuthState>,
-              private afAuth: AngularFireAuth,
               private cookieService: CookieService) { }
 
   isBufferOn$: Observable<boolean>;

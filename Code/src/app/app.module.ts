@@ -17,10 +17,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { AuthReducer } from './store/auth.reducer';
-import { environment } from 'src/environments/environment';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireAuthModule } from '@angular/fire/auth';
 import { DashboardRoutingModule } from './child-route/dashboard-routing.module';
 import { ExpenseRoutingModule } from './child-route/expense-routing.module';
 import { ProfileRoutingModule } from './child-route/profile-routing.module';
@@ -74,9 +70,6 @@ import { AuthInterceptor } from './services/auth-interceptor';
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({auth: AuthReducer, expense: ExpenseReducer, dashboard: DashboardReducer}),
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
     DashboardRoutingModule,
     ExpenseRoutingModule,
     ProfileRoutingModule,
