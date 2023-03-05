@@ -32,7 +32,6 @@ import { YearlyExpenseCategoryGraphComponent } from './dashboard/yearly-expense-
 import { ChartsModule } from 'ng2-charts';
 import { LayoutModule } from '@angular/cdk/layout';
 import { FeedbackFormComponent } from './shared/feedback-form/feedback-form.component';
-import { CookieService } from 'ngx-cookie-service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-category-graph/annual-expense-category-graph.component';
 import { LoadingComponent } from './shared/loading/loading.component';
@@ -78,7 +77,7 @@ import { AuthInterceptor } from './services/auth-interceptor';
     NgApexchartsModule,
     HttpClientModule
   ],
-  providers: [CookieService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
