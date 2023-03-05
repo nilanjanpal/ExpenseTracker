@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as authActions from './../store/auth.action';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { DashboardService } from './dashboard.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -16,7 +15,6 @@ export class AuthService {
   constructor(private store: Store,
     private snackbar: MatSnackBar,
     private router: Router,
-    private cookieService: CookieService,
     private dashboardService: DashboardService,
     private http: HttpClient) { }
 
@@ -27,22 +25,22 @@ export class AuthService {
   }
 
   autoLogin() {
-    const result = this.cookieService.get('user');
-    if (result != "") {
-      const user = JSON.parse(result);
-      if (new Date(user.user.stsTokenManager.expirationTime) > new Date()) {
-        // this.expenseService.getCategories().then(
-        //   () => {
-        //     this.store.dispatch(new authActions.Authenticate(user.user.uid, ''));
-        //     // this.router.navigate(['/dashboard']);
-        //     this.dashboardService.setExpenseDetail();
-        //   }
-        // );
-      }
-    }
-    else {
-      this.router.navigate(['/login']);
-    }
+    // const result = this.cookieService.get('user');
+    // if (result != "") {
+    //   const user = JSON.parse(result);
+    //   if (new Date(user.user.stsTokenManager.expirationTime) > new Date()) {
+    //     // this.expenseService.getCategories().then(
+    //     //   () => {
+    //     //     this.store.dispatch(new authActions.Authenticate(user.user.uid, ''));
+    //     //     // this.router.navigate(['/dashboard']);
+    //     //     this.dashboardService.setExpenseDetail();
+    //     //   }
+    //     // );
+    //   }
+    // }
+    // else {
+    //   this.router.navigate(['/login']);
+    // }
   }
 
   login(email: string, password: string): void {

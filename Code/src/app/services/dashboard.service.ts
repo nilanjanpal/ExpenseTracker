@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
 import { ExpenseDetail, CategoryExpense, DashboardState } from './../store/dashboard.reducer';
 import * as appReducer from './../store/app.reducer';

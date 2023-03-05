@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { ExpenseHistory, ExpenseState } from 'src/app/store/expense.reducer';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Store } from '@ngrx/store';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../../store/expense.action';
 import * as appReducer from './../../../store/app.reducer';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 
 @Component({
   selector: 'app-expense-table',

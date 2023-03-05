@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators, UntypedFormArray } from '@angular/forms';
 import { ExpenseService } from './../../services/expense.service';
 import { ExpenseState, Category } from 'src/app/store/expense.reducer';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class NewExpenseComponent implements OnInit {
 
-  newExpenseForm: FormGroup;
+  newExpenseForm: UntypedFormGroup;
   categories$: Observable<Category[]>;
 
   constructor(private expenseService: ExpenseService,
@@ -25,24 +25,24 @@ export class NewExpenseComponent implements OnInit {
   }
 
   initForm() {
-    this.newExpenseForm = new FormGroup({
-      expenseItemArray: new FormArray([])
+    this.newExpenseForm = new UntypedFormGroup({
+      expenseItemArray: new UntypedFormArray([])
     });
   }
 
   addNewExpenseItem() {
-    (<FormArray>this.newExpenseForm.get('expenseItemArray'))
-    .push(new FormGroup({
-      purchaseDate: new FormControl('', Validators.required),
-      itemName: new FormControl('', Validators.required),
-      itemPrice: new FormControl('', Validators.required),
-      category: new FormControl('', Validators.required),
-      comment: new FormControl('')
+    (<UntypedFormArray>this.newExpenseForm.get('expenseItemArray'))
+    .push(new UntypedFormGroup({
+      purchaseDate: new UntypedFormControl('', Validators.required),
+      itemName: new UntypedFormControl('', Validators.required),
+      itemPrice: new UntypedFormControl('', Validators.required),
+      category: new UntypedFormControl('', Validators.required),
+      comment: new UntypedFormControl('')
     }));
   }
 
   onDelete(index) {
-    (<FormArray>this.newExpenseForm.get('expenseItemArray')).removeAt(index);
+    (<UntypedFormArray>this.newExpenseForm.get('expenseItemArray')).removeAt(index);
   }
 
   onSubmit() {

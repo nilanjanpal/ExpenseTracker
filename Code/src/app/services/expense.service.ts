@@ -1,4 +1,3 @@
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as expenseActions from './../store/expense.action';
@@ -11,9 +10,7 @@ import { DashboardState } from '../store/dashboard.reducer';
 import * as dashboardActions from './../store/dashboard.action';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
-import { stringToKeyValue } from '@angular/flex-layout/extended/typings/style/style-transforms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 @Injectable({
     providedIn: 'root',
