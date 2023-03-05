@@ -6,13 +6,15 @@ export interface AuthState {
     userid: string;
     isBufferOn: boolean;
     displayName: string;
+    token: string;
 }
 
 const initialState: AuthState = {
     isAuthenticated: false,
     userid: '',
     isBufferOn: false,
-    displayName: ''
+    displayName: '',
+    token: ''
 }
 
 export function AuthReducer(state = initialState, action: AuthActions) {
@@ -28,7 +30,8 @@ export function AuthReducer(state = initialState, action: AuthActions) {
             return {
                 isAuthenticated: false,
                 userId: '',
-                isBufferOn: false
+                isBufferOn: false,
+                token: ''
             };
         case authAction.STARTBUFFER:
             return {

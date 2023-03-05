@@ -1,13 +1,14 @@
 import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { ExpenseHistory, ExpenseState } from 'src/app/store/expense.reducer';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Store } from '@ngrx/store';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../../store/expense.action';
-import { MatPaginator } from '@angular/material/paginator';
+import * as appReducer from './../../../store/app.reducer';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 
 @Component({
   selector: 'app-expense-table',
@@ -17,12 +18,12 @@ import { MatPaginator } from '@angular/material/paginator';
 export class ExpenseTableComponent implements AfterViewInit {
 
   @Input() displayedColumn$: Observable<string[]>;
-  @Input() datasource = new MatTableDataSource<ExpenseHistory>();
+  @Input() datasource: MatTableDataSource<ExpenseHistory>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(private expenseService: ExpenseService,
               private store: Store<ExpenseState>,
-              private matDialog: MatDialog) { }
+              private matDialog: MatDialog) {}
 
   ngAfterViewInit(): void {
     this.datasource.paginator = this.paginator;

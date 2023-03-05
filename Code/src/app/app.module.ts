@@ -17,10 +17,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { AuthReducer } from './store/auth.reducer';
-import { environment } from 'src/environments/environment';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireAuthModule } from '@angular/fire/auth';
 import { DashboardRoutingModule } from './child-route/dashboard-routing.module';
 import { ExpenseRoutingModule } from './child-route/expense-routing.module';
 import { ProfileRoutingModule } from './child-route/profile-routing.module';
@@ -36,10 +32,11 @@ import { YearlyExpenseCategoryGraphComponent } from './dashboard/yearly-expense-
 import { ChartsModule } from 'ng2-charts';
 import { LayoutModule } from '@angular/cdk/layout';
 import { FeedbackFormComponent } from './shared/feedback-form/feedback-form.component';
-import { CookieService } from 'ngx-cookie-service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-category-graph/annual-expense-category-graph.component';
 import { LoadingComponent } from './shared/loading/loading.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -72,17 +69,15 @@ import { LoadingComponent } from './shared/loading/loading.component';
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({auth: AuthReducer, expense: ExpenseReducer, dashboard: DashboardReducer}),
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
     DashboardRoutingModule,
     ExpenseRoutingModule,
     ProfileRoutingModule,
     ChartsModule,
     LayoutModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    HttpClientModule
   ],
-  providers: [CookieService],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

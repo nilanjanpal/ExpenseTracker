@@ -1,66 +1,99 @@
 import { Action } from "@ngrx/store";
-import { ExpenseHistory } from './expense.reducer';
+import { CategoryExpense, ExpenseDetail } from "./dashboard.reducer";
+import { Category, ExpenseHistory } from './expense.reducer';
 
-export const SET_EXPENSE_HISTORY = 'SET_EXPENSE_HISTORY';
-export const START_ANNUAL_GRAPH_LOADING = 'START_ANNUAL_GRAPH_LOADING';
-export const STOP_ANNUAL_GRAPH_LOADING = 'STOP_ANNUAL_GRAPH_LOADING';
-export const START_SIX_MONTH_GRAPH_LOADING = 'START_SIX_MONTH_GRAPH_LOADING';
-export const STOP_SIX_MONTH_GRAPH_LOADING = 'STOP_SIX_MONTH_GRAPH_LOADING';
-export const SET_SIX_MONTH_EXPENSE_HISTORY = 'SET_SIX_MONTH_EXPENSE_HISTORY';
-export const START_ANNUAL_EXPENSE_BY_CATEGORY = 'START_ANNUAL_EXPENSE_BY_CATEGORY';
-export const STOP_ANNUAL_EXPENSE_BY_CATEGORY = 'STOP_ANNUAL_EXPENSE_BY_CATEGORY';
-export const START_CURRENT_MONTH_EXPENSE_CALCULATION = 'START_CURRENT_MONTH_EXPENSE_CALCULATION';
-export const STOP_CURRENT_MONTH_EXPENSE_CALCULATION = 'STOP_CURRENT_MONTH_EXPENSE_CALCULATION';
+export const START_ANNUAL_EXPENSE_GRAPH_LOADING = 'Dashboard START_ANNUAL_EXPENSE_GRAPH_LOADING';
+export const STOP_ANNUAL_EXPENSE_GRAPH_LOADING = 'Dashboard STOP_ANNUAL_EXPENSE_GRAPH_LOADING';
+export const START_CATEGORY_EXPENSE_GRAPH_LOADING = 'Dashboard START_CATEGORY_EXPENSE_GRAPH_LOADING';
+export const STOP_CATEGORY_EXPENSE_GRAPH_LOADING = 'Dashboard STOP_CATEGORY_EXPENSE_GRAPH_LOADING';
+export const SET_CURRENT_MONTH_EXPENSE = 'Dashboard SET_CURRENT_MONTH_EXPENSE';
+export const SET_PREVIOUS_MONTH_EXPENSE = 'Dashboard SET_PREVIOUS_MONTH_EXPENSE';
+export const SET_CURRENT_YEAR_EXPENSE = 'Dashboard SET_CURRENT_YEAR_EXPENSE';
+export const SET_PREVIOUS_YEAR_EXPENSE = 'Dashboard SET_PREVIOUS_YEAR_EXPENSE';
+export const SET_EXPENSE_MONTH_ON_MONTH = 'Dashboard SET_EXPENSE_MONTH_ON_MONTH';
+export const SET_EXPENSE_YEAR_ON_YEAR = 'Dashboard SET_EXPENSE_YEAR_ON_YEAR';
+export const SET_CATEGORIES = 'Dashboard SET_CATEGORIES';
+export const SET_TRENDING_EXPENSES = 'Dashboard SET_TRENDING_EXPENSES';
+export const SET_CATEGORY_EXPENSE_DETAIL = 'Dashboard SET_CATEGORY_EXPENSE_DETAIL';
+export const SET_ANNUAL_EXPENSE_DETAIL = 'Dashboard SET_ANNUAL_EXPENSE_DETAIL';
 
-export class StartCurrentMonthExpenseCalculation {
-    readonly type = START_CURRENT_MONTH_EXPENSE_CALCULATION;
+export class StartAnnualExpenseGraphLoading implements Action {
+    readonly type = START_ANNUAL_EXPENSE_GRAPH_LOADING;
 }
 
-export class StopCurrentMonthExpenseCalculation {
-    readonly type = STOP_CURRENT_MONTH_EXPENSE_CALCULATION;
+export class StopAnnualExpenseGraphLoading implements Action {
+    readonly type = STOP_ANNUAL_EXPENSE_GRAPH_LOADING;
 }
 
-export class SetExpenseHistory implements Action {
-    readonly type = SET_EXPENSE_HISTORY;
-    constructor(public payload: ExpenseHistory[]) {}
+export class StartCategoryExpenseGraphLoading implements Action {
+    readonly type = START_CATEGORY_EXPENSE_GRAPH_LOADING;
 }
 
-export class StartYearlyGraphLoading implements Action {
-    readonly type = START_ANNUAL_GRAPH_LOADING;
+export class StopCategoryExpenseGraphLoading implements Action {
+    readonly type = STOP_CATEGORY_EXPENSE_GRAPH_LOADING;
 }
 
-export class StopYearlyGraphLoading implements Action {
-    readonly type = STOP_ANNUAL_GRAPH_LOADING;
+export class SetCurrentMonthExpense implements Action {
+    readonly type = SET_CURRENT_MONTH_EXPENSE;
+    constructor(public payload: number) {}
 }
 
-export class StartSixMonthGraphLoading implements Action {
-    readonly type = START_SIX_MONTH_GRAPH_LOADING;
+export class SetPreviousMonthExpense implements Action {
+    readonly type = SET_PREVIOUS_MONTH_EXPENSE;
+    constructor(public payload: number) {}
 }
 
-export class StopSixMonthGraphLoading implements Action {
-    readonly type = STOP_SIX_MONTH_GRAPH_LOADING;
+export class SetCurrentYearExpense implements Action {
+    readonly type = SET_CURRENT_YEAR_EXPENSE;
+    constructor(public payload: number) {}
 }
 
-export class SetSixMonthExpenseHistory implements Action {
-    readonly type = SET_SIX_MONTH_EXPENSE_HISTORY;
-    constructor(public payload: ExpenseHistory[]) {}
+export class SetPreviousYearExpense implements Action {
+    readonly type = SET_PREVIOUS_YEAR_EXPENSE;
+    constructor(public payload: number) {}
 }
 
-export class StartAnnualExpenseByCategory implements Action {
-    readonly type = START_ANNUAL_EXPENSE_BY_CATEGORY;
+export class SetExpenseMonthonMonth implements Action {
+    readonly type = SET_EXPENSE_MONTH_ON_MONTH;
+    constructor(public payload: number) {}
 }
 
-export class StopAnnualExpenseByCategory implements Action {
-    readonly type = STOP_ANNUAL_EXPENSE_BY_CATEGORY;
+export class SetExpenseYearonYear implements Action {
+    readonly type = SET_EXPENSE_YEAR_ON_YEAR;
+    constructor(public payload: number) {}
 }
 
-export type DashboardActions = StartSixMonthGraphLoading |
-                               StopSixMonthGraphLoading |
-                               StartYearlyGraphLoading |
-                               StopYearlyGraphLoading |
-                               StartAnnualExpenseByCategory |
-                               StopAnnualExpenseByCategory |
-                               SetSixMonthExpenseHistory |
-                               SetExpenseHistory |
-                               StartCurrentMonthExpenseCalculation |
-                               StopCurrentMonthExpenseCalculation;
+export class SetCategories implements Action {
+    readonly type = SET_CATEGORIES;
+    constructor(public payload: Category[]) {}
+}
+
+export class SetTrendingExpenses implements Action {
+    readonly type = SET_TRENDING_EXPENSES;
+    constructor(public payload: CategoryExpense[]) {}
+}
+
+export class SetCategoryExpenseDetail implements Action {
+    readonly type = SET_CATEGORY_EXPENSE_DETAIL;
+    constructor(public payload: ExpenseDetail[]) {}
+}
+
+export class SetAnnualExpenseDetail implements Action {
+    readonly type = SET_ANNUAL_EXPENSE_DETAIL;
+    constructor(public payload: ExpenseDetail[]) {}
+}
+
+export type DashboardActions = StartAnnualExpenseGraphLoading |
+                               StopAnnualExpenseGraphLoading |
+                               StartCategoryExpenseGraphLoading |
+                               StopCategoryExpenseGraphLoading |
+                               SetCurrentMonthExpense |
+                               SetPreviousMonthExpense |
+                               SetCurrentYearExpense |
+                               SetPreviousYearExpense |
+                               SetExpenseMonthonMonth |
+                               SetExpenseYearonYear |
+                               SetCategories |
+                               SetTrendingExpenses |
+                               SetCategoryExpenseDetail |
+                               SetAnnualExpenseDetail;

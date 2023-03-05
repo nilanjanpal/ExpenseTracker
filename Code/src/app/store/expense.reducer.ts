@@ -6,17 +6,19 @@ export interface Category {
 }
 
 export interface ExpenseHistory {
-    ExpenseId: string;
-    ItemName: string;
-    Price: number;
-    PurchaseDate: Date;
-    Category: string;
-    Comment: string;
-    isEdited: boolean;
+    id: string;
+    userId: string;
+    itemName: string;
+    comment: string;
+    purchaseDate: Date;
+    category: string;
+    price: number;
+    edited: boolean;
 }
 
 export interface ExpenseState {
-    category: Category[];
+    searchStartDate: Date;
+    searchEndDate: Date;
     expenseHistory: ExpenseHistory[];
     displayedColumns: string[];
     isEditModeOn: boolean;
@@ -25,21 +27,24 @@ export interface ExpenseState {
 }
 
 const initialState: ExpenseState = {
-    category: [],
+    searchStartDate: new Date(),
+    searchEndDate: new Date(),
     expenseHistory: [],
     displayedColumns: ['itemName', 'price', 'purchaseDate', 'category'],
     isEditModeOn: false,
-    editExpense: { ExpenseId: '', ItemName: '', PurchaseDate: new Date, Price: 0, isEdited: false, Category: '', Comment: '' },
+    editExpense: { id: '', 
+                   userId: '',
+                   itemName: '', 
+                   comment: '',
+                   purchaseDate: new Date,
+                   category: '',
+                   price: 0, 
+                   edited: false },
     isExpenseLoading: false
 };
 
 export function ExpenseReducer(state = initialState, action: expActions.expenseAction) {
     switch (action.type) {
-        case expActions.FETCH_CATEGORIES:
-            return {
-                ...state,
-                category: [...action.payload]
-            };
         case expActions.SET_EXPENSES:
             return {
                 ...state,
@@ -69,6 +74,12 @@ export function ExpenseReducer(state = initialState, action: expActions.expenseA
             return {
                 ... state,
                 isExpenseLoading: false
+            };
+        case expActions.SET_SEARCH_DATE:
+            return {
+                ... state,
+                searchStartDate: action.startDate,
+                searchEndDate: action.endDate
             };
         default:
             return state;

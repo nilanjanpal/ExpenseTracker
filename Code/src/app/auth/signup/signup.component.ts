@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AuthService } from './../../services/auth.service';
 import * as appReducer from './../../store/app.reducer';
@@ -17,7 +17,7 @@ export class SignupComponent implements OnInit {
               private store: Store<AuthState>) { }
 
   isBufferOn$: Observable<boolean>;
-  signupForm: FormGroup;
+  signupForm: UntypedFormGroup;
 
   ngOnInit(): void {
     this.initForm();
@@ -25,13 +25,13 @@ export class SignupComponent implements OnInit {
   }
 
   initForm() {
-    this.signupForm = new FormGroup({
-      email: new FormControl('',[Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('', Validators.required),
-      displayName: new FormControl('', Validators.required),
-      dob: new FormControl('', Validators.required),
-      tnc: new FormControl(false, Validators.required)
+    this.signupForm = new UntypedFormGroup({
+      email: new UntypedFormControl('',[Validators.required, Validators.email]),
+      password: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new UntypedFormControl('', Validators.required),
+      displayName: new UntypedFormControl('', Validators.required),
+      dob: new UntypedFormControl('', Validators.required),
+      tnc: new UntypedFormControl(false, Validators.required)
     });
   }
 
