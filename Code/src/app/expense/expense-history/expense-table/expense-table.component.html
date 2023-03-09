@@ -6,9 +6,6 @@
             <mat-cell *matCellDef="let element" fxLayoutGap="10px">
                 {{ element.itemName }}
                 <span *ngIf="element.edited" class="font">(edited)</span>
-                <!-- <div fxFlex fxLayoutAlign="flex-end">
-                    <span *ngIf="element.isEdited" class="font">* Edited</span>
-                </div> -->
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="price">

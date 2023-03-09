@@ -1,7 +1,7 @@
-<div fxLayout="row" >
-  <h4 fxLayout="row" fxLayoutAlign="start start" style="color: darkblue; padding: 0px; margin: 0px;">Category Analysis</h4>
-  <div fxLayout="row" fxLayoutAlign="flex-end start" fxFlex fxLayoutGap="10px">
-    <div >
+<div class="flex-container">
+  <h4  style="justify-content: flex-start end; flex-basis: 50%; row-gap: 10px; color: darkblue; padding: 0px; margin: 0px;">Category Analysis</h4>
+  <div style="display:flex; justify-content: flex-end; flex-basis:50%; flex-wrap: nowrap; row-gap: 10px;">
+    <div>
       <label style="color: darkblue; margin-right: 15px;">Category</label>
       <select name="category" id="category" (change)="onCategoryChange($event.target.value)">
         <option [value]=category.Name *ngFor="let category of categories">{{category.Name}}</option>

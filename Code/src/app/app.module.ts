@@ -37,6 +37,7 @@ import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-
 import { LoadingComponent } from './shared/loading/loading.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth-interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,12 @@ import { AuthInterceptor } from './services/auth-interceptor';
     ChartsModule,
     LayoutModule,
     NgApexchartsModule,
-    HttpClientModule
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]

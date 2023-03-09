@@ -1,15 +1,14 @@
-<form #f="ngForm" fxLayoutGap = "5px" (ngSubmit)="onSubmit()" fxFlex.lt-sm="100%" fxFlex="400px">
+<form #f="ngForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction:column; width: 400px">
   <span mat-dialog-title>Your feedback</span>
-  <span mat-dialog-content fxLayout="column">
+  <span mat-dialog-content style="display: flex; flex-direction: column;">
       <mat-form-field>
-          <mat-label fxLayoutAlign="center center">Enter your feedback</mat-label>
+          <mat-label>Enter your feedback</mat-label>
           <textarea matInput rows="5" #comments required ngModel name="comments"></textarea>
           <mat-error *ngIf="!comments.valid">You must enter feedback</mat-error>
       </mat-form-field>
   </span>
-
-  <div mat-dialog-actions fxLayout fxLayoutGap="5px" fxLayoutAlign="center">
-      <button type="submit" mat-flat-button color="primary" [mat-dialog-close]="true">Submit</button>
-      <button type="button" mat-flat-button color="accent" [mat-dialog-close]="false">Cancel</button>
+  <div mat-dialog-actions class="flex-container-row">
+    <button type="submit" mat-flat-button color="primary" [mat-dialog-close]="true">Submit</button>
+    <button type="button" mat-flat-button color="accent" [mat-dialog-close]="false">Cancel</button>
   </div>
 </form>

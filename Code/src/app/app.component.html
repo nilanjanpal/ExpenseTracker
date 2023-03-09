@@ -1,4 +1,4 @@
-<div (window:resize)="onResize($event)" fxLayout="column" fxFlexFill>
+<div (window:resize)="onResize($event)" class="flex-container-column">
     <app-header (toggleSideBar)="onToggle()" ></app-header>
     <section style="flex: 1; display: block;">
         <mat-sidenav-container>
@@ -11,12 +11,14 @@
         </mat-sidenav-container>
     </section>
     <mat-toolbar color='primary' class="position">
-      <button mat-button>
-        <mat-icon>copyright</mat-icon>
-        <span>Angular Apps 2020</span>
-    </button>
-    <div fxFlex fxLayout fxLayoutAlign="flex-end" *ngIf="(this.isAuthenticated$ | async)">
-        <button mat-button (click)="onClick()">Feedback Form</button>
-    </div>
+        <div class="flex-container">
+            <button mat-button style="display: flex;justify-content: flex-start; flex-basis: 50%;">
+                <mat-icon>copyright</mat-icon>
+                <span>Angular Apps 2020</span>
+            </button>
+            <div *ngIf="(this.isAuthenticated$ | async)" style="display: flex;justify-content: flex-end; flex-wrap: nowrap; align-content: flex-end; flex-basis: 50%;">
+                <button mat-button (click)="onClick()">Feedback Form</button>
+            </div>
+        </div>
     </mat-toolbar>
 </div>

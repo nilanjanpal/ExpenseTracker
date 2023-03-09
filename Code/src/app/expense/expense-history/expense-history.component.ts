@@ -5,8 +5,6 @@ import { ExpenseHistory, ExpenseState } from 'src/app/store/expense.reducer';
 import * as appReducer from './../../store/app.reducer';
 import { Observable, Subscription } from 'rxjs';
 import { MatLegacyTableDataSource as MatTableDataSource, MatLegacyTable as MatTable } from '@angular/material/legacy-table';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../store/expense.action';
 import { NgForm } from '@angular/forms';
 import { take } from 'rxjs/operators';
@@ -27,13 +25,11 @@ export class ExpenseHistoryComponent implements AfterViewInit, OnInit {
   endDate: Date;
   datasource = new MatTableDataSource<ExpenseHistory>();
   subscription: Subscription;
-  dialogRef: MatDialogRef<DialogComponent>;
   filterStartDate: Date;
   filterEndDate: Date;
 
   constructor(private expenseService: ExpenseService,
-    private store: Store<ExpenseState>,
-    private matDialog: MatDialog) {
+    private store: Store<ExpenseState>) {
       this.store.dispatch(new expenseActions.SetLoadingOn);
   }
 

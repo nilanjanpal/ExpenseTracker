@@ -11,3 +11,17 @@ mat-sidenav-container, mat-sidenav, mat-sidenav-content {
 .position {
   position: sticky; bottom: 0px;
 }
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.flex-container-column {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  height: 100%;
+}

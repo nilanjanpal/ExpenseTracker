@@ -4,13 +4,12 @@ import { ExpenseDetail, CategoryExpense, DashboardState } from './../store/dashb
 import * as appReducer from './../store/app.reducer';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { Category, ExpenseHistory, ExpenseState } from '../store/expense.reducer';
+import { Category } from '../store/expense.reducer';
 import * as dashboardActions from './../store/dashboard.action';
 import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ExpenseAggregateDetail } from './../model/expense-aggregate-detail';
-import { ExpenseService } from './expense.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +36,6 @@ export class DashboardService {
 
   constructor(
     private store: Store<DashboardState>,
-    private expenseStore: Store<ExpenseState>,
     private http: HttpClient
   ) {}
 
