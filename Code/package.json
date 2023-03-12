@@ -9,14 +9,13 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^15.2.1",
     "@angular/cdk": "^15.2.1",
     "@angular/common": "^15.2.1",
     "@angular/compiler": "^15.2.1",
     "@angular/core": "^15.2.1",
-    "@angular/flex-layout": "^10.0.0-beta.32",
     "@angular/forms": "^15.2.1",
     "@angular/material": "^15.2.1",
     "@angular/platform-browser": "^15.2.1",

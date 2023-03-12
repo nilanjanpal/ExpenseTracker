@@ -13,7 +13,6 @@ import { ExpenseComponent } from './expense/expense.component';
 import { EditExpenseComponent } from './expense/edit-expense/edit-expense.component';
 import { NewExpenseComponent } from './expense/new-expense/new-expense.component';
 import { MaterialModule } from './material.module';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { AuthReducer } from './store/auth.reducer';
@@ -65,8 +64,7 @@ import { ToastrModule } from 'ngx-toastr';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule,
-    FlexLayoutModule,
+    MaterialModule, 
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({auth: AuthReducer, expense: ExpenseReducer, dashboard: DashboardReducer}),
