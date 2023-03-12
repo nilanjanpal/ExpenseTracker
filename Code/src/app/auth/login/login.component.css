@@ -3,3 +3,33 @@ mat-progress-bar{
     margin: 30px;
     width:100px;
 }
+
+div {
+    display: flex;
+}
+
+img{
+    max-width: 600px;
+}
+
+mat-form-field {
+    display: block;
+}
+
+
+.layout-column {
+    flex-direction: column;
+    row-gap: 10px;
+    justify-content: space-around;
+}
+
+.login-button {
+    display: flex;
+    justify-content: center;
+    flex-basis: 49%;
+}
+
+.center {
+    display: flex;
+    justify-content:center
+}

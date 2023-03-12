@@ -1,9 +1,9 @@
-<section fxLayout="column" fxLayoutAlign="center" class="firefox-bug mat-elevation-z8 margin">
+<section class="firefox-bug mat-elevation-z8 margin flex-col">
     <table mat-table [dataSource]="datasource">
 
         <ng-container matColumnDef="itemName">
             <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
-            <mat-cell *matCellDef="let element" fxLayoutGap="10px">
+            <mat-cell *matCellDef="let element" style="display: flex;column-gap: 5px;">
                 {{ element.itemName }}
                 <span *ngIf="element.edited" class="font">(edited)</span>
             </mat-cell>
@@ -18,9 +18,9 @@
         </ng-container>
         <ng-container matColumnDef="category">
             <mat-header-cell *matHeaderCellDef>Category</mat-header-cell>
-            <mat-cell *matCellDef="let element" fxLayout>
+            <mat-cell *matCellDef="let element" style="display: flex;">
                 {{ element.category }}
-                <div fxFlex fxLayout="row" fxLayoutGap=5px fxLayoutAlign="flex-end">
+                <div class="flex-row">
                     <!-- <mat-icon *ngIf="element.isEdited" class="iconSize" matTooltip="Item has been edited" color="primary">info</mat-icon> -->
                     <mat-icon *ngIf="element.comment !== ''" class="iconSize" matTooltip="Click to check comments" color="primary" (click)="openComment(element.comment)">class</mat-icon>
                     <mat-icon matTooltip="Edit expense item" class="iconSize" color="primary" (click)="onEdit(element)">edit</mat-icon>

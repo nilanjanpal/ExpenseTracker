@@ -14,14 +14,7 @@ mat-sidenav-container, mat-sidenav, mat-sidenav-content {
 
 .flex-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  flex: 1 1 0;
+  justify-content: space-between;
   width: 100%;
-}
-
-.flex-container-column {
-  display: flex;
-  flex-direction: column;
-  align-self: stretch;
-  height: 100%;
 }

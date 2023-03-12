@@ -1,9 +1,9 @@
 <form #f="ngForm" (ngSubmit)="onSave()">
-    <div fxLayout fxLayoutGap="5px">
+    <div class="flex col-gap-5">
         <button mat-raised-button type="submit" color="primary" class="margin" [disabled]="!f.dirty">Update</button>
         <button mat-raised-button type="button" color="accent" class="margin" (click)="onCancel()">Cancel</button>
     </div>
-    <mat-card fxLayoutGap="20px" class="mat-elevation-z8 margin">
+    <mat-card class="mat-elevation-z8 margin">
         <mat-form-field>
             <mat-label>Item Name</mat-label>
             <input type="text" matInput [ngModel]= "(expense$ | async).itemName" name="ItemName">
@@ -25,7 +25,7 @@
             <mat-datepicker #picker color="primary"></mat-datepicker>
             <mat-error>You must enter date of purchase</mat-error>
         </mat-form-field>
-        <mat-card-footer fxLayout="column">
+        <mat-card-footer style="display: flex; flex-direction:column">
             <mat-form-field class="margin">
                 <mat-label>Leave a comment</mat-label>
                 <textarea matInput [ngModel]= "(expense$ | async).comment" name="Comment"></textarea>

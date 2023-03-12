@@ -1,12 +1,12 @@
 <mat-toolbar color="primary">
     <div class="flex-container">
-        <div style="display: flex; flex-basis:50%;justify-content: flex-start;">
-            <button mat-button *ngIf="(isAuthenticated$ | async)" (click)="onClick()" fxHide fxShow.lt-md>
+        <div>
+            <button mat-button *ngIf="(isAuthenticated$ | async)" (click)="onClick()">
                 <mat-icon>menu</mat-icon>
             </button>
             <button mat-button style="color: white;" color="primary" routerLink="/dashboard">Expense Tracker</button>
         </div>
-        <div style="display:flex; justify-content: flex-end; align-items: flex-end; flex-basis:50%; flex-wrap: nowrap;">
+        <div>
             <button style="color: white;" mat-button routerLink="/login" *ngIf="!(isAuthenticated$ | async)"
                 color="primary">Login</button>
             <button style="color: white;" mat-button routerLink="/signup" *ngIf="!(isAuthenticated$ | async)"

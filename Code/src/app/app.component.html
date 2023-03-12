@@ -1,6 +1,6 @@
-<div (window:resize)="onResize($event)" class="flex-container-column">
+<div (window:resize)="onResize($event)" style="display: flex; flex-direction: column;justify-content: space-between; height:100%">
     <app-header (toggleSideBar)="onToggle()" ></app-header>
-    <section style="flex: 1; display: block;">
+    <section style="flex: 1 1 0">
         <mat-sidenav-container>
             <mat-sidenav #sidenav [mode]="this.sidenavMode" *ngIf="isAuthenticated$ | async" role="navigation">
                 <app-sidebar (sidenavClickEvent)="onToggle()" (sidenavLoadEvent)="onSideNavLoad()"></app-sidebar>
@@ -12,11 +12,11 @@
     </section>
     <mat-toolbar color='primary' class="position">
         <div class="flex-container">
-            <button mat-button style="display: flex;justify-content: flex-start; flex-basis: 50%;">
+            <button mat-button>
                 <mat-icon>copyright</mat-icon>
                 <span>Angular Apps 2020</span>
             </button>
-            <div *ngIf="(this.isAuthenticated$ | async)" style="display: flex;justify-content: flex-end; flex-wrap: nowrap; align-content: flex-end; flex-basis: 50%;">
+            <div *ngIf="(this.isAuthenticated$ | async)">
                 <button mat-button (click)="onClick()">Feedback Form</button>
             </div>
         </div>

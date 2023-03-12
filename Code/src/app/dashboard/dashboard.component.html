@@ -12,7 +12,7 @@
               <div style="color: white; font-size: 1.5em; margin-bottom: 10px;">{{this.currentMonth$ | async}}</div>
               <span style="color:white; font-size: 1.5em;font-weight: bold; margin-top: 10px;">{{(currentMonthExpense$ | async) | currency:'INR'}}</span>
               <div class="flex-container">
-                <span style="color:white; margin-top: 10px;">
+                <span style="color:white; margin-top: 10px;display:flex;">
                   <span style="color:white">{{(percentageIncreaseMom$ | async) | number | number : '1.2-2'}}%</span>
                   <mat-icon color="warn" style="padding: 0;margin:0;"
                     *ngIf="(currentMonthExpense$ | async) !== 0 && ((currentMonthExpense$ | async) > (previousMonthExpense$ | async))">
@@ -64,10 +64,10 @@
         <mat-card-content>
           <div class="flex-column-container">
             <div style="color: white; font-size: 1.5em; padding-bottom: 20px;">Trending expenses</div>
-            <div fxLayout="row" style="color: white;" *ngFor="let expense of (trendingExpenseData$ | async)">
-              <span class="flex-column-container" style="flex-basis: 50%;">{{expense.category}}</span>
-              <span class="flex-column-container" style="flex-basis: 5%;">-</span>
-              <span class="flex-column-container" style="flex-basis: 45%;">{{expense.expense | currency: 'INR'}}</span>
+            <div style="display: flex; color: white;" *ngFor="let expense of (trendingExpenseData$ | async)">
+              <span style="display: flex;flex-basis: 50%;">{{expense.category}}</span>
+              <span style="display: flex;flex-basis: 5%;">-</span>
+              <span style="display: flex;flex-basis: 45%;">{{expense.expense | currency: 'INR'}}</span>
             </div>
           </div>
         </mat-card-content>
