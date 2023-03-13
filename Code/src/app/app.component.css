@@ -11,3 +11,10 @@ mat-sidenav-container, mat-sidenav, mat-sidenav-content {
 .position {
   position: sticky; bottom: 0px;
 }
+
+.flex-container {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: space-between;
+  width: 100%;
+}

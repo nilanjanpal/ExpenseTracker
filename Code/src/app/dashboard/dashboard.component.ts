@@ -8,6 +8,8 @@ import { Store } from '@ngrx/store';
 import { DashboardService } from '../services/dashboard.service';
 import { CategoryExpense, DashboardState } from '../store/dashboard.reducer';
 import { Category, ExpenseState } from '../store/expense.reducer';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,9 +21,6 @@ export class DashboardComponent implements OnInit {
   today: number;
   currentYear = (new Date()).getFullYear();
   currentMonth$: Observable<string>;
-  // monthlyGraphLoadingStatus$: Observable<boolean>;
-  // annualGraphLoadingStatus$: Observable<boolean>;
-  // sixMonthGraphLoadingStatus$: Observable<boolean>;
   isDataUpdateInProgress$: Observable<boolean>;
   isDataFetchComplete$: Observable<boolean>;
 
@@ -69,7 +68,11 @@ export class DashboardComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver,
               private dashboardService: DashboardService,
               private store: Store<DashboardState>,
-              private expenseStore: Store<ExpenseState>) {}
+              private iconRegistry: MatIconRegistry,
+              private sanitizer: DomSanitizer) {
+    this.iconRegistry.addSvgIcon('money',this.sanitizer.bypassSecurityTrustResourceUrl('/assets/rupee-svgrepo-com.svg'));
+    this.iconRegistry.addSvgIcon('graph',this.sanitizer.bypassSecurityTrustResourceUrl('/assets/line-graph-part-2-svgrepo-com.svg'));
+  }
 
   ngOnInit(): void {
     this.today = (new Date()).getMonth();

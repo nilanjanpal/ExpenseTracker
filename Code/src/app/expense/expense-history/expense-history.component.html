@@ -1,6 +1,6 @@
-<div fxLayout="column" fxFlex="100%">
+<div style="display: flex; flex-direction: column;flex: 1 1 100%;">
     <section class="margin">
-        <form #searchForm="ngForm" (ngSubmit)="filterData()" fxLayoutGap="10px">
+        <form #searchForm="ngForm" (ngSubmit)="filterData()" style="display: flex; flex-direction: row; column-gap: 10px;">
             <mat-form-field color="accent" appearance="fill" class="height">
                 <mat-label>From</mat-label>
                 <input matInput [ngModel]="startDate" [max]="filterStartDate" name="startDate" [matDatepicker]="startpicker">
@@ -21,10 +21,10 @@
     <section *ngIf="(isLoading$ | async)" class="margin">
         <h2 style="color: darkblue;">Loading ...</h2>
     </section>
-    <section *ngIf="!(isLoading$ | async)" class="margin" fxShow fxHide.lt-md>
+    <section *ngIf="!(isLoading$ | async)" class="margin">
         <app-expense-table [datasource]="datasource" [displayedColumn$]="displayedColumn$"></app-expense-table>
     </section>
-    <section *ngIf="!(isLoading$ | async)" class="margin" fxHide fxShow.lt-md>
+    <!-- <section *ngIf="!(isLoading$ | async)" class="margin">
         <app-expense-expand-panel [datasource]="datasource"></app-expense-expand-panel>
-    </section>
+    </section> -->
 </div>

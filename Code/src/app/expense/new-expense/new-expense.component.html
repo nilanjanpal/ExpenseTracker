@@ -1,6 +1,6 @@
 <form [formGroup]="newExpenseForm" (ngSubmit)="onSubmit()">
     <div formArrayName="expenseItemArray">
-        <mat-card fxLayoutGap="20px" class="margin mat-elevation-z2" *ngFor="let item of newExpenseForm.get('expenseItemArray')['controls']; let i=index;" [formGroupName]="i">
+        <mat-card class="margin mat-elevation-z2 flex-container" *ngFor="let item of newExpenseForm.get('expenseItemArray')['controls']; let i=index;" [formGroupName]="i">
             <mat-form-field>
                 <mat-label>Enter the name of the item</mat-label>
                 <input matInput type="text" formControlName="itemName">

@@ -7,27 +7,26 @@
       <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
-          <div fxLayout="row" fxLayoutAlign="start stretch">
-            <div fxLayout="column" fxFlex="50%">
+          <div class="flex-container">
+            <div class="flex-child">
               <div style="color: white; font-size: 1.5em; margin-bottom: 10px;">{{this.currentMonth$ | async}}</div>
               <span style="color:white; font-size: 1.5em;font-weight: bold; margin-top: 10px;">{{(currentMonthExpense$ | async) | currency:'INR'}}</span>
-              <span style="color:white; margin-top: 10px;" fxLayout="row" fxLayoutAlign="start center">
-                <span style="color:white">{{(percentageIncreaseMom$ | async) | number | number : '1.2-2'}}%</span>
-                <mat-icon color="warn" style="padding: 0;margin:0;"
-                  *ngIf="(currentMonthExpense$ | async) !== 0 && ((currentMonthExpense$ | async) > (previousMonthExpense$ | async))">
-                  arrow_drop_up</mat-icon>
-                <mat-icon style="color:white; padding: 0;margin:0;"
-                  *ngIf="(currentMonthExpense$ | async) !== 0 && ((currentMonthExpense$ | async) < (previousMonthExpense$ | async))">
-                  arrow_drop_down</mat-icon>
-              </span>
+              <div class="flex-container">
+                <span style="color:white; margin-top: 10px;display:flex;">
+                  <span style="color:white">{{(percentageIncreaseMom$ | async) | number | number : '1.2-2'}}%</span>
+                  <mat-icon color="warn" style="padding: 0;margin:0;"
+                    *ngIf="(currentMonthExpense$ | async) !== 0 && ((currentMonthExpense$ | async) > (previousMonthExpense$ | async))">
+                    arrow_drop_up</mat-icon>
+                  <mat-icon style="color:white; padding: 0;margin:0;"
+                    *ngIf="(currentMonthExpense$ | async) !== 0 && ((currentMonthExpense$ | async) < (previousMonthExpense$ | async))">
+                    arrow_drop_down</mat-icon>
+                </span>
+              </div>
             </div>
-            <div fxFlex="50%" fxLayoutAlign="center">
-              <mat-icon style="color:white; font-size: 72px;"
-                  *ngIf="(currentMonthExpense$ | async) !== 0 ">
-                  account_balance</mat-icon>
-              <!-- <img style="color: white" src="./../../assets/icons8-euro-money-24.png"> -->
+            <div class="flex-child">
+              <mat-icon *ngIf="(currentMonthExpense$ | async) !== 0" style="height: fit-content; width: fit-content; padding:10px" svgIcon="money"></mat-icon>
             </div>
-          </div> 
+          </div>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
@@ -35,14 +34,14 @@
       <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
-          <div fxLayout="row" fxLayoutAlign="start stretch">
-            <div fxLayout="column" fxFlex="50%">
+          <div class="flex-container">
+            <div class="flex-child">
               <div style="color: white; font-size: 1.5em; padding-bottom: 10px;">{{currentYear}}</div>
               <span style="color:white; font-size: 1.5em;font-weight: bold; margin-top: 10px;">{{((currentYearExpense$ | async)) | currency:'INR'}}</span>
-              <span style="color:white; margin-top: 10px;" fxLayout="row" fxLayoutAlign="start center">
+              <span style="color:white; margin-top: 10px;" class="flex-container">
                 <span style="color: white;" *ngIf="(previousYearExpense$ | async) != 0">{{(((currentYearExpense$ | async))/((previousYearExpense$ | async))* 100) | number | number : '1.2-2'}}% of {{currentYear-1}}</span>
               </span>
-              <span style="color:white; margin-top: 10px;" fxLayout="row" fxLayoutAlign="start center">
+              <span style="color:white; margin-top: 10px;" class="flex-container">
                 <span style="color: white;">{{(percentageIncreaseYoy$ | async) | number | number : '1.2-2'}}%</span>
                 <mat-icon color="warn" style="padding: 0;margin:0;"
                   *ngIf="(percentageIncreaseYoy$ | async) > 0">
@@ -52,9 +51,8 @@
                   arrow_drop_down</mat-icon>
               </span>
             </div>
-            <div fxFlex="50%" fxLayoutAlign = "center">
-              <mat-icon style="color:white; font-size: 72px;">
-                  trending_up</mat-icon>
+            <div class="flex-child">
+              <mat-icon style="padding: 10px; width:fit-content; height:fit-content" svgIcon="graph"></mat-icon>
             </div>
           </div>
         </mat-card-content>
@@ -64,12 +62,12 @@
       <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
-          <div fxLayout="column" fxLayoutAlign="start stretch">
+          <div class="flex-column-container">
             <div style="color: white; font-size: 1.5em; padding-bottom: 20px;">Trending expenses</div>
-            <div fxLayout="row" style="color: white;" *ngFor="let expense of (trendingExpenseData$ | async)">
-              <span fxLayout="column" fxFlex="50%">{{expense.category}}</span>
-              <span fxLayout="column" fxFlex="5%">-</span>
-              <span fxLayout="column" fxFlex="45%">{{expense.expense | currency: 'INR'}}</span>
+            <div style="display: flex; color: white;" *ngFor="let expense of (trendingExpenseData$ | async)">
+              <span style="display: flex;flex-basis: 50%;">{{expense.category}}</span>
+              <span style="display: flex;flex-basis: 5%;">-</span>
+              <span style="display: flex;flex-basis: 45%;">{{expense.expense | currency: 'INR'}}</span>
             </div>
           </div>
         </mat-card-content>
@@ -79,20 +77,12 @@
       <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
-          <div fxLayout="column" fxLayoutAlign="center center">
-            <!-- <h1 style="color:white; font-weight: bold;">{{(lastSixMonthExpenseDetail$ | async)?.sixMonthTotalExpense |
-              currency:'INR'}}</h1>
-            <h3 style="color: white">Last six month expenses</h3> -->
-          </div>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
   <mat-grid-list [cols]="(cardLayout |async).gridCol" [rowHeight]="(cardLayout | async).rowheight">
     <mat-grid-tile [colspan]="(cardLayout |async).wideCard.col" [rowspan]="(cardLayout |async).wideCard.row">
-      <!-- <section *ngIf="(this.isDataUpdateInProgress$ | async)">
-        <h4 style="color: darkblue;">Loading ...</h4>
-      </section> -->
       <mat-card class="dashboard-card mat-elevation-z4">
         <mat-card-content>
           <div>
@@ -103,48 +93,11 @@
     </mat-grid-tile>
   </mat-grid-list>
   <mat-grid-list [cols]="(cardLayout |async).gridCol" [rowHeight]="(cardLayout | async).rowheight">
-    <!-- <mat-grid-tile [colspan]="(cardLayout|async).smallCard.col" [rowspan]="(cardLayout|async).wideCard.row">
-      <section *ngIf="(this.monthlyGraphLoadingStatus$ | async)">
-        <h4 style="color: darkblue;">Loading ...</h4>
-      </section>
-      <mat-card class="dashboard-card mat-elevation-z4" *ngIf="!(this.monthlyGraphLoadingStatus$ | async)">
-        <mat-card-content>
-          <div fxLayout>
-            <h3 style="color: darkblue;">Monthly Expense</h3>
-            <div fxFlex fxLayout fxLayoutAlign="flex-end">
-              <label style="color: darkblue; margin: 15px">Category</label>
-              <select name="category" id="category" (change)="onMonthChange($event.target.value)" style="max-width: 90%;">
-                <option [value]=month [selected]="i == today" *ngFor="let month of (allMonths$ | async);let i=index">{{month}}</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <app-monthly-expense-graph [monthlyExpenseDetail$]="(currentMonthExpense$ | async)$"></app-monthly-expense-graph>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile> -->
     <mat-grid-tile  [colspan]="(cardLayout |async).wideCard.col" [rowspan]="(cardLayout |async).wideCard.row">
-      <!-- <section *ngIf="(this.isDataUpdateInProgress$ | async)">
-        <h4 style="color: darkblue;">Loading ...</h4>
-      </section> -->
       <mat-card class="dashboard-card mat-elevation-z4">
         <mat-card-content>
           <app-yearly-expense-category-graph>
           </app-yearly-expense-category-graph>
-          <!-- <div fxLayout>
-            <h4 style="color: darkblue; padding: 0px; margin: 0px;">Annual Expense By Category</h4>
-            <div fxFlex fxLayout fxLayoutAlign="flex-end">
-              <label style="color: darkblue; margin-right: 15px;">Category</label>
-              <select name="category" id="category" (change)="onChange($event.target.value)">
-                <option [value]=category *ngFor="let category of (categories$ | async)">{{category.Name}}</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <app-yearly-expense-category-graph>
-            </app-yearly-expense-category-graph>
-          </div> -->
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

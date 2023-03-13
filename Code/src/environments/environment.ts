@@ -14,7 +14,8 @@ export const environment = {
     appId: "1:757956429532:web:60f3c664c859c8adf75619",
     measurementId: "G-9G232RXKFH"
   },
-  url: "http://localhost:8080/api/"
+  url: "https://expense-tracker-backend-production-4d1b.up.railway.app/api/"
+  // url: "http://localhost:8080/api/"
 };
 
 /*

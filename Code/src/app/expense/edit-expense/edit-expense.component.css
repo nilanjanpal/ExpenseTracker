@@ -4,3 +4,27 @@
     margin-top: 10px;
     margin-bottom: 20px;
 }
+
+.flex {
+    display: flex;
+}
+
+.col-gap-5 {
+    column-gap: 5px;
+}
+
+.col-gap-20 {
+    column-gap: 20px;
+}
+
+div{
+    display:flex;
+}
+
+mat-card {
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    align-items: baseline;
+    padding-left: 20px;
+}

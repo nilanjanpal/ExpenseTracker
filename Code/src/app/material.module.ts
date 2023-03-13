@@ -4,7 +4,7 @@ import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/lega
 import {MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
@@ -12,7 +12,7 @@ import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/mat
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';

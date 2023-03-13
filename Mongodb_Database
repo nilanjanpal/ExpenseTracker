@@ -1,0 +1,17 @@
+admin/OIK0Fe7m1SIVFAgh
+
+mongosh "mongodb+srv://mflix.wjx2d.mongodb.net/myFirstDatabase" --apiVersion 1 --username admin
+
+
+mongoimport --uri=mongodb+srv://mflix.wjx2d.mongodb.net/ --username=admin --password=OIK0Fe7m1SIVFAgh --db=ExpenseTracker --collection=ExpenseDetail --file=expense.json --jsonArray --legacy
+
+db.UserDetail.aggregate([{$match: {email:"nilanjanpal@yahoo.com"}}, {$addFields: {username:"nilanjanpal@yahoo.com", password: "$2a$10$F2lpPPiLJ8FeLNkjH4kBtOvGybFG0QnaZSTu/dgKAKNaZioR03/P."}}])
+
+{ "userId" : "63d5730f4fe3dfd26b62c537", "purchaseDate" : { "$gte" : { "$date" : "2021-12-31T18:30:00Z"}, "$lte" : { "$date" : "2022-12-30T18:30:00Z"}}}
+
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("63e086d89109c5e02b1390dd")}}, {$group: {_id: null, "total":{$sum:1}}}])
+db.ExpenseDetail.aggregate([{$group: {_id: null, "total":{$sum:1}}},{$match: {userId:ObjectId("63e086d89109c5e02b1390dd")}}])
+db.ExpenseDetail.aggregate([{ "$match" : { "userId" : "63e086d89109c5e02b1390dd"}},{ "$group" : { "_id" : null, "expense" : { "$sum" : "$price"}}}]);
+
+
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("63e086d89109c5e02b1390dd")}}, {$group: {_id:{year:{$year: "$purchaseDate" }, month:{$month: "$purchaseDate"}}, "total":{$sum:"$price"}}}])

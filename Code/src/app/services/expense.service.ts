@@ -6,11 +6,9 @@ import { Observable, Subject,  Subscription } from 'rxjs';
 import { ExpenseHistory } from './../store/expense.reducer';
 import { map, switchMap, take } from 'rxjs/operators';
 import { DashboardService } from './dashboard.service';
-import { DashboardState } from '../store/dashboard.reducer';
-import * as dashboardActions from './../store/dashboard.action';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
     providedIn: 'root',
@@ -23,7 +21,7 @@ export class ExpenseService {
     constructor(private store: Store<{ Name: string, Description: string }>,
                 private http: HttpClient,
                 private dashboardService: DashboardService,
-                private snackbar: MatSnackBar) { }
+                private toastr: ToastrService) { }
 
     saveExpenses(expenseItems): void {
         let expenseHistory: ExpenseHistory[] = [];
@@ -50,7 +48,7 @@ export class ExpenseService {
                     () => {
                         this.refreshExpenses();
                         this.dashboardService.refreshData();
-                        this.snackbar.open("Added successfully", 'Dismiss', { duration: 5000 });
+                        this.toastr.success('Success', 'Expense added successfully');
                         // console.log('Insert complete successfully');
                     }
                 )
@@ -136,6 +134,8 @@ export class ExpenseService {
                     () => {
                         this.refreshExpenses();
                         this.dashboardService.refreshData();
+                        this.toastr.success('Information', 'Expense deleted successfully');
+                        // this.toastr.fireSuccess('Information','Expense deleted successfully');
                         console.log("Item deleted");
                     }
                 );
@@ -156,6 +156,8 @@ export class ExpenseService {
                         this.refreshExpenses();
                         this.store.dispatch(new expenseActions.SetEditModeOff());
                         this.dashboardService.refreshData();
+                        this.toastr.success('Success', 'Expense updated successfully');
+                        // this.toastr.fireSuccess('Success','Expense updated successfully');
                         console.log('Update complete successfully');
                     }
                 )

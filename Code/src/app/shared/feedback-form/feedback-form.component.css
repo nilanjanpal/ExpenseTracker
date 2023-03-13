@@ -1,0 +1,6 @@
+.flex-container-row {
+    display: flex;
+    flex-direction: row;
+    row-gap: 5px;
+    justify-content: center;
+}

@@ -13,7 +13,6 @@ import { ExpenseComponent } from './expense/expense.component';
 import { EditExpenseComponent } from './expense/edit-expense/edit-expense.component';
 import { NewExpenseComponent } from './expense/new-expense/new-expense.component';
 import { MaterialModule } from './material.module';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { AuthReducer } from './store/auth.reducer';
@@ -37,6 +36,7 @@ import { AnnualExpenseCategoryGraphComponent } from './dashboard/annual-expense-
 import { LoadingComponent } from './shared/loading/loading.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth-interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -64,8 +64,7 @@ import { AuthInterceptor } from './services/auth-interceptor';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule,
-    FlexLayoutModule,
+    MaterialModule, 
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({auth: AuthReducer, expense: ExpenseReducer, dashboard: DashboardReducer}),
@@ -75,7 +74,12 @@ import { AuthInterceptor } from './services/auth-interceptor';
     ChartsModule,
     LayoutModule,
     NgApexchartsModule,
-    HttpClientModule
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    })
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
