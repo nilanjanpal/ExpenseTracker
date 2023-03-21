@@ -1,39 +1,39 @@
 <div style="width: 100%; height: 100%; justify-content: center; align-items: center; column-gap: 20px;">
-  <mat-card style="margin-right: 20px; max-width: 600px;">
+  <mat-card appearance="outlined" style="margin-right: 20px; width: fit-content;" *appLargeDeviceVersion>
     <mat-card-content>
       <img src="./../assets/login_background.jpg">
     </mat-card-content>
   </mat-card>
-  <mat-card class="mat-elevation-z8" style="max-width: 500px; height: fit-content; justify-content: space-around; padding: 10px;">
+  <mat-card appearance="outlined" class="mat-elevation-z8" style="width: 400px; height: fit-content; justify-content: space-around; padding: 10px;">
     <mat-card-content>
         <form #f="ngForm" (ngSubmit)="onSubmit()" class="layout-column">
             <mat-form-field>
-                <mat-label class="center">Enter your email</mat-label>
-                <input type="email" name="email" matInput required email ngModel #email>
-                <mat-error *ngIf="!email.valid">You must enter email</mat-error>
+                <mat-label>Enter your username</mat-label>
+                <input type="email" name="email" matInput required ngModel #email>
+                <mat-error *ngIf="!email.valid">You must enter username</mat-error>
             </mat-form-field>
             <mat-form-field>
-                <mat-label class="center">Enter password</mat-label>
+                <mat-label>Enter password</mat-label>
                 <input type="password" name="password" matInput required ngModel #password>
                 <mat-error *ngIf="!password.valid">You must enter password</mat-error>
             </mat-form-field>
             <div style="flex-direction: row;justify-content: space-between;" >
-                <button type="submit" mat-raised-button color="primary" [disabled]="!f.valid" class="login-button">Login</button>
-                <button type="button" mat-raised-button color="accent" (click)="onClear()" class="login-button">Clear</button>
+                <button mat-raised-button [disabled]="!f.valid" (click)="onSubmit()" class="login-button gradient-background white-font">Login</button>
+                <button mat-raised-button color="accent" (click)="onClear()" class="login-button">Clear</button>
             </div>
             <mat-label class="center" style="padding-bottom: 10px; padding-top: 10px;">Don't have an account ?</mat-label>
-            <button type="button" mat-raised-button color="primary" (click)="onSignUp()" style="width: 100%;">Sign Up</button>
-            <div style="column-gap: 5px;justify-content: center;align-items: center;">
+            <button mat-raised-button (click)="onSignUp()" style="width: 100%;" class="gradient-background white-font">Sign Up</button>
+            <!-- <div style="justify-content: flex-start;align-items: center; padding-top: 10px;">
               <span style="width: fit-content;">Sign in with :</span>
-              <button type="button" mat-button style="flex:1 1 35%" (click)="onSigninWithGoogle()">
+              <button type="button" mat-button style="flex:1 1 0; justify-content: baseline;" (click)="onSigninWithGoogle()">
                 <img src="./../../../assets/btn_google_light_normal_ios.svg" style="padding-right: 0px;">
                 <span style=  "font-size: 14px;">Google</span>
               </button>
-              <button type="button" mat-button color="primary" style="flex:1 1 35%;" (click)="onSigninWithFacebook()">
+              <button type="button" mat-button color="primary" style="flex:1 1 0;" (click)="onSigninWithFacebook()">
                 <mat-icon style="margin-right: 5px;">facebook</mat-icon>
                 <span style= "color: darkblue; font-size: 14px;">Facebook</span>
               </button>
-            </div>
+            </div> -->
           </form>
     </mat-card-content>
     <mat-card-footer class="center">

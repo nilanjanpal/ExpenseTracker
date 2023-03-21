@@ -1,13 +1,13 @@
 <div style="display: flex; flex-direction: column;flex: 1 1 100%;">
     <section class="margin">
         <form #searchForm="ngForm" (ngSubmit)="filterData()" style="display: flex; flex-direction: row; column-gap: 10px;">
-            <mat-form-field color="accent" appearance="fill" class="height">
+            <mat-form-field color="accent" appearance="fill">
                 <mat-label>From</mat-label>
                 <input matInput [ngModel]="startDate" [max]="filterStartDate" name="startDate" [matDatepicker]="startpicker">
                 <mat-datepicker-toggle matSuffix [for]="startpicker"></mat-datepicker-toggle>
                 <mat-datepicker #startpicker color="primary"></mat-datepicker>
             </mat-form-field>
-            <mat-form-field color="accent" appearance="fill" class="height">
+            <mat-form-field color="accent" appearance="fill">
                 <mat-label>To</mat-label>
                 <input matInput [ngModel]="endDate" [min]="filterEndDate" name="endDate" [matDatepicker]="endpicker">
                 <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
@@ -21,10 +21,14 @@
     <section *ngIf="(isLoading$ | async)" class="margin">
         <h2 style="color: darkblue;">Loading ...</h2>
     </section>
-    <section *ngIf="!(isLoading$ | async)" class="margin">
-        <app-expense-table [datasource]="datasource" [displayedColumn$]="displayedColumn$"></app-expense-table>
-    </section>
-    <!-- <section *ngIf="!(isLoading$ | async)" class="margin">
-        <app-expense-expand-panel [datasource]="datasource"></app-expense-expand-panel>
-    </section> -->
+    <div *appLargeDeviceVersion>
+        <section *ngIf="!(isLoading$ | async)" class="margin">
+            <app-expense-table [datasource]="datasource" [displayedColumn$]="displayedColumn$"></app-expense-table>
+        </section>
+    </div>
+    <div *appSmallDeviceVersion>
+        <section *ngIf="!(isLoading$ | async)" class="margin">
+            <app-expense-expand-panel [datasource]="datasource"></app-expense-expand-panel>
+        </section>
+    </div>
 </div>

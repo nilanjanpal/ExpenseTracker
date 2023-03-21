@@ -37,6 +37,9 @@ import { LoadingComponent } from './shared/loading/loading.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth-interceptor';
 import { ToastrModule } from 'ngx-toastr';
+import { LargeDeviceVersionDirective } from './directive/largeDeviceContent/large-device-version.directive';
+import { SmallDeviceVersionDirective } from './directive/smallDeviceContent/small-device-version.directive';
+import { HighlightDirective } from './directive/hoverContent/highlight.directive';
 
 @NgModule({
   declarations: [
@@ -58,7 +61,10 @@ import { ToastrModule } from 'ngx-toastr';
     YearlyExpenseCategoryGraphComponent,
     FeedbackFormComponent,
     AnnualExpenseCategoryGraphComponent,
-    LoadingComponent
+    LoadingComponent,
+    LargeDeviceVersionDirective,
+    SmallDeviceVersionDirective,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as authActions from './../store/auth.action';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DashboardService } from './dashboard.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UserDetail } from './../model/user-detail';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class AuthService {
     private snackbar: MatSnackBar,
     private router: Router,
     private dashboardService: DashboardService,
-    private http: HttpClient) { }
+    private http: HttpClient,
+    private toastr: ToastrService) { }
 
   private token: String = '';
 
@@ -72,49 +74,34 @@ export class AuthService {
   }
 
   signup(userDetail): void {
+    const userData = {
+      username: userDetail.username,
+      email: userDetail.email,
+      password: userDetail.password,
+      dateOfBirth: userDetail.dob,
+      firstName: userDetail.firstname,
+      lastName: userDetail.lastname
+    };
     this.store.dispatch(new authActions.StartBuffer());
-    // this.afAuth.createUserWithEmailAndPassword(userDetail.email, userDetail.password)
-    //   .then(
-    //     result => {
-    //       const profile = {
-    //         displayName: userDetail.displayName,
-    //         photoURL: ''
-    //       };
-    //       result.user.updateProfile(profile).then(
-    //         (data) => { console.log('update profile'); console.log(data) }
-    //       );
-    //       // this.expenseService.getCategories();
-    //       this.store.dispatch(new authActions.StopBuffer());
-    //       // this.fireStore.collection('UserDetail').add({ UserId: result.user.uid,
-    //       //                                               Name: userDetail.name,
-    //       //                                               EmailId: userDetail.email,
-    //       //                                               DateOfBirth: userDetail.dob});
-    //       this.store.dispatch(new authActions.Authenticate(result.user.uid, result.user.displayName));
-    //       this.router.navigate(['/dashboard']);
-    //       // this.dashboardService.setExpenseDetail();
-    //       this.cookieService.set('user', JSON.stringify(result));
-    //     }
-    //   )
-    //   .catch(
-    //     error => {
-    //       this.snackbar.open(error, 'Dismiss', { duration: 5000 });
-    //       this.store.dispatch(new authActions.StopBuffer());
-    //     }
-    //   );
+    this.http.post<{token:string, message:string}>(environment.url + "signup", userData)
+    .subscribe(
+      (response) => {
+        this.store.dispatch(new authActions.StopBuffer());
+        this.toastr.success('Success', 'User signup complete');
+        this.router.navigate(['/login']);
+      },
+      (error) => {
+        this.snackbar.open(error.message, 'Dismiss', {duration: 5000});
+        this.store.dispatch(new authActions.StopBuffer());
+        this.store.dispatch(new authActions.StopAuthentication());                  
+      }
+    );
   }
 
   logout(): void {
     this.token = "";
     this.store.dispatch(new authActions.UnAuthenticate());
     this.router.navigate(['/login']);
-    // this.afAuth.signOut()
-    //   .then(
-    //     result => {
-    //       this.store.dispatch(new authActions.UnAuthenticate());
-    //       this.router.navigate(['/login']);
-    //       this.cookieService.delete('user');
-    //     }
-    //   );
   }
 
   signInWithGoogle(): void {

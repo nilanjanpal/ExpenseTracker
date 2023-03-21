@@ -1,12 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ExpenseHistory, ExpenseState } from 'src/app/store/expense.reducer';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { ExpenseService } from 'src/app/services/expense.service';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import * as expenseActions from './../../../store/expense.action';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-expense-expand-panel',

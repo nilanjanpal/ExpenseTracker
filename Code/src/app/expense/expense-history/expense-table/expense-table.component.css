@@ -33,3 +33,8 @@
     display: flex;
     flex-direction: column;
 }
+
+mat-header-cell, mat-cell {
+    border-bottom-width: 0.2px;
+    border-bottom-color: #C0C0C0;
+}

@@ -4,7 +4,7 @@ import { ExpenseService } from 'src/app/services/expense.service';
 import { ExpenseHistory, ExpenseState } from 'src/app/store/expense.reducer';
 import * as appReducer from './../../store/app.reducer';
 import { Observable, Subscription } from 'rxjs';
-import { MatLegacyTableDataSource as MatTableDataSource, MatLegacyTable as MatTable } from '@angular/material/legacy-table';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import * as expenseActions from './../../store/expense.action';
 import { NgForm } from '@angular/forms';
 import { take } from 'rxjs/operators';
@@ -54,14 +54,6 @@ export class ExpenseHistoryComponent implements AfterViewInit, OnInit {
       }
     );
   }
-
-  // ngAfterContentInit() {
-  //   // console.log('ngDoCheck');
-  //   this.store.select(appReducer.getExpenses)
-  //   .subscribe(
-  //     data => this.datasource.data = [...data]
-  //   )
-  // }
 
 
   filterData() {
