@@ -29,7 +29,9 @@ export class SignupComponent implements OnInit {
       email: new UntypedFormControl('',[Validators.required, Validators.email]),
       password: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new UntypedFormControl('', Validators.required),
-      displayName: new UntypedFormControl('', Validators.required),
+      firstname: new UntypedFormControl('', Validators.required),
+      lastname: new UntypedFormControl('', Validators.required),
+      username: new UntypedFormControl('', Validators.required),
       dob: new UntypedFormControl('', Validators.required),
       tnc: new UntypedFormControl(false, Validators.required)
     });

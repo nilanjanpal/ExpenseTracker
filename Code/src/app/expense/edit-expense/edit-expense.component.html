@@ -3,7 +3,7 @@
         <button mat-raised-button type="submit" color="primary" class="margin" [disabled]="!f.dirty">Update</button>
         <button mat-raised-button type="button" color="accent" class="margin" (click)="onCancel()">Cancel</button>
     </div>
-    <mat-card class="mat-elevation-z8 margin">
+    <mat-card appearance="outlined" class="mat-elevation-z8 margin">
         <mat-form-field>
             <mat-label>Item Name</mat-label>
             <input type="text" matInput [ngModel]= "(expense$ | async).itemName" name="ItemName">

@@ -3,3 +3,8 @@
 :active{
     cursor: pointer;
 } */
+
+div {
+    display: flex;
+    column-gap: 10px;
+}

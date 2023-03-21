@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { NgForm } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';

@@ -49,7 +49,6 @@ export class ExpenseService {
                         this.refreshExpenses();
                         this.dashboardService.refreshData();
                         this.toastr.success('Success', 'Expense added successfully');
-                        // console.log('Insert complete successfully');
                     }
                 )
                 // this.dashboardService.setExpenseDetail().then(
@@ -135,8 +134,6 @@ export class ExpenseService {
                         this.refreshExpenses();
                         this.dashboardService.refreshData();
                         this.toastr.success('Information', 'Expense deleted successfully');
-                        // this.toastr.fireSuccess('Information','Expense deleted successfully');
-                        console.log("Item deleted");
                     }
                 );
             }
@@ -157,8 +154,6 @@ export class ExpenseService {
                         this.store.dispatch(new expenseActions.SetEditModeOff());
                         this.dashboardService.refreshData();
                         this.toastr.success('Success', 'Expense updated successfully');
-                        // this.toastr.fireSuccess('Success','Expense updated successfully');
-                        console.log('Update complete successfully');
                     }
                 )
             }

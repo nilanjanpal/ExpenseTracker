@@ -4,7 +4,7 @@
 <div class="grid-container" *ngIf="!(isDataUpdateInProgress$ | async)">
   <mat-grid-list [cols]="(cardLayout |async).gridCol" [rowHeight]="(cardLayout | async).rowheight">
     <mat-grid-tile [colspan]="(cardLayout|async).smallCard.col" [rowspan]="(cardLayout|async).smallCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
           <div class="flex-container">
@@ -31,7 +31,7 @@
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="(cardLayout|async).smallCard.col" [rowspan]="(cardLayout|async).smallCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
           <div class="flex-container">
@@ -59,7 +59,7 @@
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="(cardLayout|async).smallCard.col" [rowspan]="(cardLayout|async).smallCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
           <div class="flex-column-container">
@@ -74,7 +74,7 @@
       </mat-card>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="(cardLayout|async).smallCard.col" [rowspan]="(cardLayout|async).smallCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4 gradient-background">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4 gradient-background">
         <mat-card-title></mat-card-title>
         <mat-card-content>
         </mat-card-content>
@@ -83,7 +83,7 @@
   </mat-grid-list>
   <mat-grid-list [cols]="(cardLayout |async).gridCol" [rowHeight]="(cardLayout | async).rowheight">
     <mat-grid-tile [colspan]="(cardLayout |async).wideCard.col" [rowspan]="(cardLayout |async).wideCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4">
         <mat-card-content>
           <div>
             <app-yearly-expense-graph></app-yearly-expense-graph>
@@ -94,7 +94,7 @@
   </mat-grid-list>
   <mat-grid-list [cols]="(cardLayout |async).gridCol" [rowHeight]="(cardLayout | async).rowheight">
     <mat-grid-tile  [colspan]="(cardLayout |async).wideCard.col" [rowspan]="(cardLayout |async).wideCard.row">
-      <mat-card class="dashboard-card mat-elevation-z4">
+      <mat-card appearance="outlined" class="dashboard-card mat-elevation-z4">
         <mat-card-content>
           <app-yearly-expense-category-graph>
           </app-yearly-expense-category-graph>

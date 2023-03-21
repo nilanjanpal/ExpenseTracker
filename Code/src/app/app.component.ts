@@ -4,7 +4,7 @@ import * as appReducer from './store/app.reducer';
 import { AuthState } from './store/auth.reducer';
 import { Observable } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { FeedbackFormComponent } from './shared/feedback-form/feedback-form.component';
 import { AuthService } from './services/auth.service';
 

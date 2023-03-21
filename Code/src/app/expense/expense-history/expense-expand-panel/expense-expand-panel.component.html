@@ -1,11 +1,11 @@
 <mat-accordion *ngFor="let element of datasource.data">
     <mat-expansion-panel>
         <mat-expansion-panel-header>
-            <mat-panel-title>{{ element.ItemName }} - {{element.PurchaseDate | date: 'MMMM-d'}}</mat-panel-title>
+            <mat-panel-title>{{ element.itemName }} - {{element.purchaseDate | date: 'MMMM-d'}}</mat-panel-title>
         </mat-expansion-panel-header>
         <mat-form-field>
             <mat-label>Item Name</mat-label>
-            <input matInput type="text" [value]=element.ItemName disabled>
+            <input matInput type="text" [value]=element.itemName disabled>
         </mat-form-field>
         <!-- <mat-form-field>
             <mat-label>Purchase Date</mat-label>
@@ -13,15 +13,15 @@
         </mat-form-field> -->
         <mat-form-field>
             <mat-label>Price</mat-label>
-            <input matInput type="text" [value]=element.Price disabled>
+            <input matInput type="text" [value]=element.price disabled>
         </mat-form-field>
         <mat-form-field>
             <mat-label>Category</mat-label>
-            <input matInput type="text" [value]=element.Category disabled>
+            <input matInput type="text" [value]=element.category disabled>
         </mat-form-field>
-        <mat-form-field *ngIf="element.Comment != ''">
+        <mat-form-field *ngIf="element.comment != ''">
             <mat-label>Comment</mat-label>
-            <textarea matInput type="text" [value]=element.Comment disabled></textarea>
+            <textarea matInput type="text" [value]=element.comment disabled></textarea>
         </mat-form-field>
         <p>
             <mat-hint *ngIf="element.isEdited == true">* Item has been edited</mat-hint>
