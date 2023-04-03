@@ -17,7 +17,7 @@ export class StopAuthentication implements Action {
 
 export class Authenticate implements Action {
     readonly type = AUTHENTICATE;
-    public constructor(public userId: string, public displayName: string) { }
+    public constructor(public userId: string) { }
 }
 
 export class UnAuthenticate implements Action {

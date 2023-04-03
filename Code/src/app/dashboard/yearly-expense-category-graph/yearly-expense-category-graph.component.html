@@ -1,6 +1,6 @@
 <div class="flex-container">
   <h4  style="justify-content: flex-start end; flex-basis: 50%; row-gap: 10px; color: darkblue; padding: 0px; margin: 0px;">Category Analysis</h4>
-  <div style="display:flex; justify-content: flex-end; flex-basis:50%; flex-wrap: nowrap; row-gap: 10px;">
+  <div style="display:flex; justify-content: flex-end; flex-basis:50%; flex-wrap: nowrap; column-gap: 10px;">
     <div>
       <label style="color: darkblue; margin-right: 15px;">Category</label>
       <select name="category" id="category" (change)="onCategoryChange($event.target.value)">
@@ -10,7 +10,7 @@
     <div>
       <label style="color: darkblue; margin-right: 15px;">Years</label>
       <select name="year" id="year" (change)="onYearChange($event.target.value)">
-        <option [value]=year *ngFor="let year of (years$ | async)">{{year}}</option>
+        <option [value]=year *ngFor="let year of years">{{year}}</option>
       </select>
     </div>
   </div>

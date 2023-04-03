@@ -1,8 +1,28 @@
-import { AuthState } from './auth.reducer';
-import { ExpenseState } from './expense.reducer';
-import { DashboardState } from './dashboard.reducer';
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { AuthReducer, AuthState } from './auth.reducer';
+import { ExpenseReducer, ExpenseState } from './expense.reducer';
+import { DashboardReducer, DashboardState } from './dashboard.reducer';
+import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
+import { UserReducer, UserState } from './user.reducer';
 
+export interface AppState {
+    user: UserState,
+    expense: ExpenseState,
+    dashboard: DashboardState,
+    auth: AuthState
+}
+
+export const AppReducer: ActionReducerMap<AppState> = { 
+    auth: AuthReducer,
+    expense: ExpenseReducer, 
+    dashboard: DashboardReducer, 
+    user: UserReducer
+}
+
+export const getUserState = createFeatureSelector<UserState>('user');
+export const getFirstName = createSelector(getUserState, state => state.firstName);
+export const getLastName = createSelector(getUserState, state => state.lastName);
+export const getUsername = createSelector(getUserState, state => state.username);
+export const getDateOfBirth = createSelector(getUserState, state => state.dateOfBirth);
 
 export const getAuthState = createFeatureSelector<AuthState>('auth');
 export const getIsAuthenticated = createSelector(getAuthState, state => state.isAuthenticated);
@@ -33,3 +53,5 @@ export const getTrendingExpenses = createSelector(getDashboardState, state => st
 export const getCategories = createSelector(getDashboardState, state => state.categories);
 export const getCategoryExpenseDetail = createSelector(getDashboardState, state => state.categoryExpenseDetail);
 export const getAnnualExpenseDetail = createSelector(getDashboardState, state => state.annualExpenseDetail);
+export const getSelectedCategory = createSelector(getDashboardState, state => state.selectedCategory);
+export const getSelectedYear = createSelector(getDashboardState, state => state.selectedYear);

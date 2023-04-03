@@ -1,6 +1,6 @@
 import { Action } from "@ngrx/store";
 import { CategoryExpense, ExpenseDetail } from "./dashboard.reducer";
-import { Category, ExpenseHistory } from './expense.reducer';
+import { Category } from './expense.reducer';
 
 export const START_ANNUAL_EXPENSE_GRAPH_LOADING = 'Dashboard START_ANNUAL_EXPENSE_GRAPH_LOADING';
 export const STOP_ANNUAL_EXPENSE_GRAPH_LOADING = 'Dashboard STOP_ANNUAL_EXPENSE_GRAPH_LOADING';
@@ -16,6 +16,8 @@ export const SET_CATEGORIES = 'Dashboard SET_CATEGORIES';
 export const SET_TRENDING_EXPENSES = 'Dashboard SET_TRENDING_EXPENSES';
 export const SET_CATEGORY_EXPENSE_DETAIL = 'Dashboard SET_CATEGORY_EXPENSE_DETAIL';
 export const SET_ANNUAL_EXPENSE_DETAIL = 'Dashboard SET_ANNUAL_EXPENSE_DETAIL';
+export const SET_SELECTED_YEAR = 'Dashboard SET_SELECTED_YEAR';
+export const SET_SELECTED_CATEGORY = 'Dashboard SET_SELECTED_CATEGORY';
 
 export class StartAnnualExpenseGraphLoading implements Action {
     readonly type = START_ANNUAL_EXPENSE_GRAPH_LOADING;
@@ -83,6 +85,16 @@ export class SetAnnualExpenseDetail implements Action {
     constructor(public payload: ExpenseDetail[]) {}
 }
 
+export class SetSelectedYear implements Action {
+    readonly type = SET_SELECTED_YEAR;
+    constructor(public payload: number) {}
+}
+
+export class SetSelectedCategory implements Action {
+    readonly type = SET_SELECTED_CATEGORY;
+    constructor(public payload: string) {}
+}
+
 export type DashboardActions = StartAnnualExpenseGraphLoading |
                                StopAnnualExpenseGraphLoading |
                                StartCategoryExpenseGraphLoading |
@@ -96,4 +108,6 @@ export type DashboardActions = StartAnnualExpenseGraphLoading |
                                SetCategories |
                                SetTrendingExpenses |
                                SetCategoryExpenseDetail |
-                               SetAnnualExpenseDetail;
+                               SetAnnualExpenseDetail |
+                               SetSelectedCategory |
+                               SetSelectedYear;
