@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class HeaderComponent implements OnInit {
 
   isAuthenticated$: Observable<boolean>;
+  firstName$: Observable<string>;
   constructor(private store: Store<AuthState>,
               private authService: AuthService) { }
 
@@ -20,6 +21,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAuthenticated$ = this.store.select(appReducer.getIsAuthenticated);
+    this.firstName$ = this.store.select(appReducer.getFirstName);
   }
 
   onLogout() {

@@ -25,6 +25,8 @@ export interface DashboardState {
     trendingExpenses: CategoryExpense[];
     categoryExpenseDetail: ExpenseDetail[];
     annualExpenseDetail: ExpenseDetail[];
+    selectedYear: number;
+    selectedCategory: string;
 }
 
 const initialState: DashboardState = {
@@ -40,7 +42,9 @@ const initialState: DashboardState = {
     categories: [],
     trendingExpenses: [],
     categoryExpenseDetail: [],
-    annualExpenseDetail: []
+    annualExpenseDetail: [],
+    selectedYear: 0,
+    selectedCategory: ''
 }
 
 export function DashboardReducer(state = initialState, action: dashboardActions.DashboardActions) {
@@ -118,6 +122,16 @@ export function DashboardReducer(state = initialState, action: dashboardActions.
             return {
                 ... state,
                 annualExpenseDetail: [... action.payload]
+            }
+        case dashboardActions.SET_SELECTED_CATEGORY:
+            return {
+                ... state,
+                selectedCategory: action.payload
+            }
+        case dashboardActions.SET_SELECTED_YEAR:
+            return {
+                ... state,
+                selectedYear: action.payload
             }
         default:
             return state;

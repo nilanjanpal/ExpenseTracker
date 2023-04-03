@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as authActions from './../store/auth.action';
+import * as userActions from './../store/user.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DashboardService } from './dashboard.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UserDetail } from './../model/user-detail';
 import { ToastrService } from 'ngx-toastr';
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -45,25 +48,30 @@ export class AuthService {
     // }
   }
 
-  login(email: string, password: string): void {
+  login(username: string, password: string): void {
+    const httpOptions = {
+      headers: new HttpHeaders({'Content-Type':  'application/json'})
+  };
     this.store.dispatch(new authActions.StartBuffer());
     this.store.dispatch(new authActions.StartAuthentication());
-    this.http.post<{ token: string, message: string }>(environment.url + "authenticate", { userName: email, password: password })
+    this.http.post<{token: string,message: string}>(environment.url + "authenticate", { userName: username, password: password }, httpOptions)
       .subscribe(
         (response) => {
+          // console.log(response);
           this.token = response.token;
           if (response.token != "" || response.token != null) {
-            this.http.get<UserDetail>(environment.url + "user/" + email)
+            this.http.get<UserDetail>(environment.url + "user/" + username)
               .subscribe(
                 (user) => {
-                  const displayName = user.firstName + " " + user.lastName;
+                  window.sessionStorage.setItem('user', JSON.stringify(user))
                   this.store.dispatch(new authActions.StopBuffer());
-                  this.store.dispatch(new authActions.Authenticate(user.id, displayName));
+                  this.store.dispatch(new authActions.Authenticate(user.id));
+                  this.store.dispatch(new userActions.SetUserDetail(user));
                   this.dashboardService.initLoadData();
                   this.router.navigate(['/dashboard']);
                 },
                 (error) => {
-                  this.snackbar.open(response.message, 'Dismiss', {duration: 5000});
+                  this.snackbar.open(error, 'Dismiss', {duration: 5000});
                   this.store.dispatch(new authActions.StopBuffer());
                   this.store.dispatch(new authActions.StopAuthentication());                  
                 }
@@ -100,6 +108,8 @@ export class AuthService {
 
   logout(): void {
     this.token = "";
+    localStorage.removeItem('token');
+    window.sessionStorage.removeItem('user');
     this.store.dispatch(new authActions.UnAuthenticate());
     this.router.navigate(['/login']);
   }

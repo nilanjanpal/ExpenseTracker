@@ -40,6 +40,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { LargeDeviceVersionDirective } from './directive/largeDeviceContent/large-device-version.directive';
 import { SmallDeviceVersionDirective } from './directive/smallDeviceContent/small-device-version.directive';
 import { HighlightDirective } from './directive/hoverContent/highlight.directive';
+import { UserReducer } from './store/user.reducer';
+import { AppReducer } from './store/app.reducer';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,7 @@ import { HighlightDirective } from './directive/hoverContent/highlight.directive
     MaterialModule, 
     FormsModule,
     ReactiveFormsModule,
-    StoreModule.forRoot({auth: AuthReducer, expense: ExpenseReducer, dashboard: DashboardReducer}),
+    StoreModule.forRoot(AppReducer),
     DashboardRoutingModule,
     ExpenseRoutingModule,
     ProfileRoutingModule,

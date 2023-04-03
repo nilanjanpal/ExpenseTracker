@@ -88,16 +88,23 @@ export class DashboardService {
     this.getCategories()
     .pipe(take(1))
     .subscribe(
-      (data:Category[]) => {
-        this.store.dispatch(new dashboardActions.SetCategories(data));
-        this.getAnnualExpenseDetailByCategory(data[0].Name)
+      (category:Category[]) => {
+        this.store.dispatch(new dashboardActions.SetSelectedCategory(category[0].Name));
+        this.store.dispatch(new dashboardActions.SetCategories(category));
+        this.store.select(appReducer.getSelectedYear)
         .pipe(take(1))
         .subscribe(
-          data => {
-            this.store.dispatch(new dashboardActions.SetCategoryExpenseDetail(data));
-            this.store.dispatch(new dashboardActions.StopCategoryExpenseGraphLoading);
+          (selectedYear: number) => {
+            this.getAnnualExpenseDetailByCategory(category[0].Name, selectedYear)
+            .pipe(take(1))
+            .subscribe(
+              data => {
+                this.store.dispatch(new dashboardActions.SetCategoryExpenseDetail(data));
+                this.store.dispatch(new dashboardActions.StopCategoryExpenseGraphLoading);
+              }
+            );
           }
-        );
+        )
       }
     );
 
@@ -180,7 +187,10 @@ export class DashboardService {
         (id) => {
           return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses/month",{params: {"id": id, "year": year, "month": month}})
           .pipe(
-            map(response => response.expense)
+            map(response => {
+              console.log(year + ' - ' + month +' - '+response.expense);
+              return response.expense;
+            })
           )
         }
       )
@@ -232,9 +242,9 @@ export class DashboardService {
     )
   }
   
-  getAnnualExpenseDetailByCategory(category: string):Observable<ExpenseDetail[]> {
-    const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
-    const year = date.toLocaleString('en-US', {year: 'numeric'});
+  getAnnualExpenseDetailByCategory(category: string, year: number):Observable<ExpenseDetail[]> {
+    // const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    // const yearSelected = date.toLocaleString('en-US', {year: 'numeric'});
     return this.store.select(appReducer.getUserId)
     .pipe(
       switchMap(
@@ -312,6 +322,22 @@ export class DashboardService {
         (result) => {
           const currentMonth = (new Date()).getMonth();
           return result[currentMonth];
+        }
+      )
+    )
+  }
+
+  getYears(): Observable<number[]> {
+    return this.store.select(appReducer.getUserId)
+    .pipe(
+      switchMap(
+        (id) => {
+          return this.http.get<number[]>(environment.url+"years",{params: {"id": id}})
+          .pipe(
+            map((response) => {
+              return response;
+            })
+          )
         }
       )
     )

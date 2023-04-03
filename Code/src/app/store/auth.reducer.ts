@@ -5,7 +5,6 @@ export interface AuthState {
     isAuthenticated: boolean;
     userid: string;
     isBufferOn: boolean;
-    displayName: string;
     token: string;
 }
 
@@ -13,7 +12,6 @@ const initialState: AuthState = {
     isAuthenticated: false,
     userid: '',
     isBufferOn: false,
-    displayName: '',
     token: ''
 }
 
@@ -21,15 +19,15 @@ export function AuthReducer(state = initialState, action: AuthActions) {
     switch(action.type) {
         case authAction.AUTHENTICATE:
             return {
+                ...state,
                 isAuthenticated: true,
                 userid: action.userId,
-                isBufferOn: false,
-                displayName: action.displayName
+                isBufferOn: false
             };
         case authAction.UNAUTHENTICATE:
             return {
                 isAuthenticated: false,
-                userId: '',
+                userid: '',
                 isBufferOn: false,
                 token: ''
             };
