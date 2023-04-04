@@ -14,4 +14,16 @@ db.ExpenseDetail.aggregate([{$group: {_id: null, "total":{$sum:1}}},{$match: {us
 db.ExpenseDetail.aggregate([{ "$match" : { "userId" : "63e086d89109c5e02b1390dd"}},{ "$group" : { "_id" : null, "expense" : { "$sum" : "$price"}}}]);
 
 
-db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("63e086d89109c5e02b1390dd")}}, {$group: {_id:{year:{$year: "$purchaseDate" }, month:{$month: "$purchaseDate"}}, "total":{$sum:"$price"}}}])
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("64108bf67fe874384014263e")}}, {$group: {_id:{year:{$year: "$purchaseDate" }, month:{$month: "$purchaseDate"}}, "total":{$sum:"$price"}}}])
+
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("64108bf67fe874384014263e")}}, {$group: {_id:{year:{$year: "$purchaseDate" }}}}])
+
+
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("64108bf67fe874384014263e"),purchaseDate:{$gte:ISODate("2023-04-01T00:00:00Z"),$lte:ISODate("2023-04-30T00:00:00Z")}}}, {$group: {_id:{year:{$year: "$purchaseDate"}, month:{$month: "$purchaseDate"}}, "total":{$sum:"$price"}}}])
+
+db.ExpenseDetail.aggregate([{$match: {userId:ObjectId("64108bf67fe874384014263e"),purchaseDate:{$gte:ISODate("2022-04-01T18:30:00Z"),$lte:ISODate("2023-03-31T18:30:00Z")}}}, {$group: {_id:{year:{$year: {date:"$purchaseDate",timezone:"Asia/Kolkata"}}, month:{$month: {date:"$purchaseDate",timezone:"Asia/Kolkata"}}}, "total":{$sum:"$price"}}}])
+
+Executing aggregation: [{ "$match" : { "userId" : { "$oid" : "64108bf67fe874384014263e"}}}, { "$match" : { "purchaseDate" : { "$gte" : { "$date" : "2022-03-31T18:30:00Z"}, "$lte" : { "$date" : "2023-03-30T18:30:00Z"}}}}, { "$project" : { "price" : 1, "month" : { "$month" : "$purchaseDate"}, "year" : { "$year" : "$purchaseDate"}}}, { "$group" : { "_id" : { "year" : "$year", "month" : "$month"}, "expense" : { "$sum" : "$price"}}}, { "$project" : { "_id" : 0, "expense" : 1, "date" : "$_id"}}, { "$sort" : { "date.year" : 1, "date.month" : 1}}] in collection ExpenseDetail
+
+
+[{ "$match" : { "userId" : { "$oid" : "64108bf67fe874384014263e"}}}, { "$match" : { "purchaseDate" : { "$gte" : { "$date" : "2023-02-28T18:30:00Z"}, "$lte" : { "$date" : "2023-03-30T18:30:00Z"}}}}, { "$group" : { "_id" : null, "expense" : { "$sum" : "$price"}}}] in collection ExpenseDetail
