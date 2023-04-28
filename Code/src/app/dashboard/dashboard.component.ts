@@ -98,11 +98,6 @@ export class DashboardComponent implements OnInit {
     this.percentageIncreaseYoy$ = this.store.select(appReducer.getExpenseYearonYear);
     this.trendingExpenseData$ = this.store.select(appReducer.getTrendingExpenses);
     this.categories$ = this.store.select(appReducer.getCategories);
-
-
-    this.currentMonthExpense$.subscribe(
-      data => console.log(data)
-    )
   }
 
   onMonthChange(data) {

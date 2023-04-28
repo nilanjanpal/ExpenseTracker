@@ -54,7 +54,12 @@ export class YearlyExpenseGraphComponent implements OnInit {
           ],
           chart: {
             height: 350,
-            type: "line"
+            type: "line",
+            events: {
+              mounted: (chart) => {
+                chart.windowResizeHandler();
+              }
+            }
           },
           stroke: {
             width: 7,

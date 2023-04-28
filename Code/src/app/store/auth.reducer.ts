@@ -20,9 +20,8 @@ export function AuthReducer(state = initialState, action: AuthActions) {
         case authAction.AUTHENTICATE:
             return {
                 ...state,
-                isAuthenticated: true,
-                userid: action.userId,
-                isBufferOn: false
+                isBufferOn: false,
+                token: action.token
             };
         case authAction.UNAUTHENTICATE:
             return {
@@ -31,16 +30,21 @@ export function AuthReducer(state = initialState, action: AuthActions) {
                 isBufferOn: false,
                 token: ''
             };
-        case authAction.STARTBUFFER:
+        case authAction.START_AUTHENTICATION:
             return {
                 ...state,
                 isBufferOn: true
-            };
-        case authAction.STOPBUFFER:
+            }
+        case authAction.STOP_AUTHENTICATION:
             return {
-                ...state,
-                isBufferOn: false
-            };
+                ... state,
+                isAuthenticated: true
+            }
+        case authAction.SET_USER:
+            return {
+                ... state,
+                userid: action.userId
+            }
         default:
             return state;
     }

@@ -133,6 +133,11 @@ export function DashboardReducer(state = initialState, action: dashboardActions.
                 ... state,
                 selectedYear: action.payload
             }
+        case dashboardActions.SET_DATA_UPDATE_INPROGRESS:
+            return {
+                ... state,
+                isDataUpdateInProgress: action.payload
+            }
         default:
             return state;
     }

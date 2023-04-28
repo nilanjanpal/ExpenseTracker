@@ -42,6 +42,14 @@ import { SmallDeviceVersionDirective } from './directive/smallDeviceContent/smal
 import { HighlightDirective } from './directive/hoverContent/highlight.directive';
 import { UserReducer } from './store/user.reducer';
 import { AppReducer } from './store/app.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffect } from './effects/authEffects';
+import { UserEffect } from './effects/userEffects';
+import { ProfileComponent } from './profile/profile.component';
+import { InvestmentRoutingModuleModule } from './child-route/investment-routing-module.module';
+import { InvestmentComponent } from './investment/investment.component';
+import { InvestmentHistoryComponent } from './investment/investment-history/investment-history.component';
+import { NewInvestmentComponent } from './investment/new-investment/new-investment.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +63,9 @@ import { AppReducer } from './store/app.reducer';
     EditExpenseComponent,
     NewExpenseComponent,
     ExpenseHistoryComponent,
+    InvestmentComponent,
     DialogComponent,
+    ProfileComponent,
     ExpenseTableComponent,
     ExpenseExpandPanelComponent,
     MonthlyExpenseGraphComponent,
@@ -66,7 +76,9 @@ import { AppReducer } from './store/app.reducer';
     LoadingComponent,
     LargeDeviceVersionDirective,
     SmallDeviceVersionDirective,
-    HighlightDirective
+    HighlightDirective,
+    InvestmentHistoryComponent,
+    NewInvestmentComponent
   ],
   imports: [
     BrowserModule,
@@ -76,9 +88,11 @@ import { AppReducer } from './store/app.reducer';
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot(AppReducer),
+    EffectsModule.forRoot(AuthEffect,UserEffect),
     DashboardRoutingModule,
     ExpenseRoutingModule,
     ProfileRoutingModule,
+    InvestmentRoutingModuleModule,
     ChartsModule,
     LayoutModule,
     NgApexchartsModule,

@@ -188,7 +188,6 @@ export class DashboardService {
           return this.http.get<ExpenseAggregateDetail>(environment.url+"expenses/month",{params: {"id": id, "year": year, "month": month}})
           .pipe(
             map(response => {
-              console.log(year + ' - ' + month +' - '+response.expense);
               return response.expense;
             })
           )
