@@ -1,12 +1,12 @@
 <mat-toolbar class="gradient-background">
     <div class="flex-container">
-        <div>
-            <div *appSmallDeviceVersion>
+        <div style="display: flex;">
+            <div >
                 <button mat-button *ngIf="(isAuthenticated$ | async)" (click)="onClick()">
                     <mat-icon style="color: white;">menu</mat-icon>
                 </button>
             </div>
-            <button appHighlight mat-button style="color: white;" color="primary" routerLink="/dashboard">Expense Tracker</button>
+            <button mat-button style="color: white;" color="primary" routerLink="/dashboard">Expense Tracker</button>
         </div>
         <div>
             <button style="color: white;" mat-button routerLink="/login" *ngIf="!(isAuthenticated$ | async)"

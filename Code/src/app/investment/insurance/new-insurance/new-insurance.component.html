@@ -1,0 +1,72 @@
+<form [formGroup]="newInsuranceForm" *ngIf="isAddFormActive">
+    <mat-card>
+        <!-- <mat-card-header>New Insurance</mat-card-header> -->
+        <div class="flex-container">
+            <mat-form-field>
+                <mat-label>Policy number</mat-label>
+                <input matInput type="text" formControlName="policyNumber">
+                <mat-error>You must enter policy number</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Policy name</mat-label>
+                <input matInput type="text" formControlName="policyName">
+                <mat-error>You must enter policy name</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Company name</mat-label>
+                <input matInput type="text" formControlName="companyName">
+                <mat-error>You must enter company name</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Premium Amount</mat-label>
+                <input matInput type="number" formControlName="premiumAmount">
+                <mat-error>You must enter premium amount</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Sum Assured</mat-label>
+                <input matInput type="number" formControlName="sumAssured">
+                <mat-error>You must enter sum assured</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label >Purchase Date</mat-label>
+                <input matInput formControlName="purchaseDate" [matDatepicker]="purchaseDatePicker">
+                <mat-datepicker-toggle matSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #purchaseDatePicker color="primary"></mat-datepicker>
+                <mat-error>You must enter date of purchase</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label >Payment End Date</mat-label>
+                <input matInput formControlName="paymentEndDate" [matDatepicker]="paymentEndDatePicker">
+                <mat-datepicker-toggle matSuffix [for]="paymentEndDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #paymentEndDatePicker color="primary"></mat-datepicker>
+                <mat-error>You must enter payment end date</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label >Maturity Date</mat-label>
+                <input matInput formControlName="maturityDate" [matDatepicker]="maturityDatePicker">
+                <mat-datepicker-toggle matSuffix [for]="maturityDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #maturityDatePicker color="primary"></mat-datepicker>
+                <mat-error>You must enter date of maturity</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Maturity Amount</mat-label>
+                <input matInput type="number" formControlName="maturityAmount">
+                <mat-error>You must enter maturity amount</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Payment Frequency</mat-label>
+                <input matInput type="text" formControlName="paymentFrequency">
+                <mat-error>You must enter payment frequency</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Policy Status</mat-label>
+                <input matInput type="text" formControlName="policyStatus">
+                <mat-error>You must enter policy status</mat-error>
+            </mat-form-field>
+        </div>
+        <mat-card-actions>
+            <button type="button" mat-raised-button class="gradient-background white-font" [disabled]="!this.newInsuranceForm.valid" (click)="onSubmit()">Save</button>
+            <button type="button" mat-raised-button (click)="clearForm()">Cancel</button>
+        </mat-card-actions>
+    </mat-card>
+</form>

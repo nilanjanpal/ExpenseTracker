@@ -3,19 +3,22 @@ import { ExpenseReducer, ExpenseState } from './expense.reducer';
 import { DashboardReducer, DashboardState } from './dashboard.reducer';
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
 import { UserReducer, UserState } from './user.reducer';
+import { InvestmentReducer, InvestmentState } from './investment.reducer';
 
 export interface AppState {
     user: UserState,
     expense: ExpenseState,
     dashboard: DashboardState,
-    auth: AuthState
+    auth: AuthState,
+    investment: InvestmentState
 }
 
 export const AppReducer: ActionReducerMap<AppState> = { 
     auth: AuthReducer,
     expense: ExpenseReducer, 
     dashboard: DashboardReducer, 
-    user: UserReducer
+    user: UserReducer,
+    investment: InvestmentReducer
 }
 
 export const getUserState = createFeatureSelector<UserState>('user');
@@ -55,3 +58,8 @@ export const getCategoryExpenseDetail = createSelector(getDashboardState, state 
 export const getAnnualExpenseDetail = createSelector(getDashboardState, state => state.annualExpenseDetail);
 export const getSelectedCategory = createSelector(getDashboardState, state => state.selectedCategory);
 export const getSelectedYear = createSelector(getDashboardState, state => state.selectedYear);
+
+export const getInvestmentState = createFeatureSelector<InvestmentState>('investment');
+export const getInsurance = createSelector(getInvestmentState, state => state.insurance);
+export const getEquity = createSelector(getInvestmentState, state => state.equity);
+export const getTransactionDetail = createSelector(getInvestmentState, state => state.equity.transactionDetail);

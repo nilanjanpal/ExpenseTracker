@@ -16,7 +16,7 @@ import { AuthService } from './services/auth.service';
 export class AppComponent implements OnInit {
   title = 'Expense Tracker';
   @ViewChild('sidenav') sidenav: MatSidenav;
-  sidenavMode: string;
+  sidenavMode: string = 'side';
 
   isAuthenticated$: Observable<boolean>;
 
@@ -26,13 +26,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAuthenticated$ = this.store.select(appReducer.getIsAuthenticated);
-    this.authService.autoLogin();
+    // this.authService.autoLogin();
   }
 
   onToggle(): void {
     if (this.sidenavMode === 'over'){
       this.sidenav.toggle();
     }
+    // this.sidenav.toggle();
   }
 
   onSideNavLoad(): void {

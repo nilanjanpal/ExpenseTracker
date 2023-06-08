@@ -27,3 +27,26 @@ Executing aggregation: [{ "$match" : { "userId" : { "$oid" : "64108bf67fe8743840
 
 
 [{ "$match" : { "userId" : { "$oid" : "64108bf67fe874384014263e"}}}, { "$match" : { "purchaseDate" : { "$gte" : { "$date" : "2023-02-28T18:30:00Z"}, "$lte" : { "$date" : "2023-03-30T18:30:00Z"}}}}, { "$group" : { "_id" : null, "expense" : { "$sum" : "$price"}}}] in collection ExpenseDetail
+
+db.InvestmentCategory.insertMany([
+	{name:"Insurance",description:""},
+	{name:"PPF",description:""},
+	{name:"Equity",description:""},
+	{name:"Mutual Fund",description:""},
+	{name:"NPS",description:""}
+]);
+db.InsuranceCompany.insertOne({name:"LIC",description:""});
+db.InvestmentDetail.insertOne({investmentType: "Insurance",insuranceCompany: "LIC",amount: 73263.04,purchaseDate:ISODate("2023-04-03T18:30:00.000Z"),isEdited: false,userId: ObjectId("64108bf67fe874384014263e")});
+
+
+db.InsuranceDetail.insertOne({policynumber:"495462598",policyName:"Jeevan Vridhhi(T-808)",companyName:"LIC", purchaseDate:ISODate("2012-04-23T18:30:00.000Z"),premiumAmount:50000,paymentEndDate:ISODate("2012-04-23T18:30:00.000Z"),maturityDate:ISODate("2022-04-21T18:30:00.000Z"), paymentFrequency:"Single",policyStatus:"Matured",isEdited:false,userId:ObjectId("64108bf67fe874384014263e")});
+
+
+db.EquityDetail.insertOne({stockName:"Bajaj Finance Pvt. Ltd.",stockPurchasePrice: 6095,quantity: 3,brokerage&OtherCharges:129.67,purchaseDate:ISODate("2023-03-03T18:30:00.000Z")});
+
+db.EquityTransactionDetail.insertOne({stockName: "Bajaj Finance Pvt. Ltd.",pricePerStock: 6095,brokerageAndOtherCharges: 129.67,transactionType: "Buy",quantity: 3,transactionDate: ISODate("2023-03-03T18:30:00.000Z"),userId: ObjectId("64108bf67fe874384014263e")})
+
+
+
+
+

@@ -1,0 +1,32 @@
+<div>
+    <mat-toolbar-row class="toolbar">
+        <button mat-button appHighlight (click)="onActive()">Active</button>
+        <button mat-button appHighlight (click)="onTransactionHistory()">Transaction History</button>
+        <button mat-button appHighlight (click)="onProfitLoss()">Profit/Loss</button>
+    </mat-toolbar-row>
+    <div *ngIf="activeTab==='Active'">Active</div>
+    <div *ngIf="activeTab==='Transaction History'">
+        <div *ngFor="let element of (equityDetail$ | async)">
+            <mat-expansion-panel (opened)="panelOpenState = true"
+                           (closed)="panelOpenState = false">
+                <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span>{{element.stockName}}</span>  
+                    <span [ngStyle]="{'color':element.transactionType==='Buy'?'green':'red'}">{{element.transactionType}}</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                    Transaction date - {{element.transactionDate | date:'dd-MM-yyyy'}}
+                </mat-panel-description>
+                </mat-expansion-panel-header>
+                    <span>Price (per stock) - {{element.pricePerStock}}</span>
+                    <span>Brokerage and Other Charges - {{element.brokerageAndOtherCharges}}</span>
+                    <span>Number of stocks - {{element.quantity}}</span>
+                    <span>Gross amount - {{element.transactionType==='Buy'?(element.pricePerStock*element.quantity)+element.brokerageAndOtherCharges:(element.pricePerStock*element.quantity)-element.brokerageAndOtherCharges}}</span>
+            </mat-expansion-panel>
+        </div>
+    </div>
+    <div *ngIf="activeTab==='Profit/Loss'">Profit/Loss</div>
+    <!-- <table mat-table *ngIf="activeTab==='Active'">Active</table>
+    <mat-table *ngIf="activeTab==='Transaction History'">Transaction History</mat-table>
+    <mat-table *ngIf="activeTab==='Profit/Loss'">Profit/Loss</mat-table> -->
+</div>

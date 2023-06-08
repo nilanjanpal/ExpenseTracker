@@ -18,6 +18,7 @@ export const SET_CATEGORY_EXPENSE_DETAIL = 'Dashboard SET_CATEGORY_EXPENSE_DETAI
 export const SET_ANNUAL_EXPENSE_DETAIL = 'Dashboard SET_ANNUAL_EXPENSE_DETAIL';
 export const SET_SELECTED_YEAR = 'Dashboard SET_SELECTED_YEAR';
 export const SET_SELECTED_CATEGORY = 'Dashboard SET_SELECTED_CATEGORY';
+export const SET_DATA_UPDATE_INPROGRESS = 'Dashboard DATA_UPDATE_INPROGRESS';
 
 export class StartAnnualExpenseGraphLoading implements Action {
     readonly type = START_ANNUAL_EXPENSE_GRAPH_LOADING;
@@ -95,6 +96,11 @@ export class SetSelectedCategory implements Action {
     constructor(public payload: string) {}
 }
 
+export class SetDataUpdateInProgress implements Action {
+    readonly type = SET_DATA_UPDATE_INPROGRESS;
+    constructor(public payload:boolean) {}
+}
+
 export type DashboardActions = StartAnnualExpenseGraphLoading |
                                StopAnnualExpenseGraphLoading |
                                StartCategoryExpenseGraphLoading |
@@ -110,4 +116,5 @@ export type DashboardActions = StartAnnualExpenseGraphLoading |
                                SetCategoryExpenseDetail |
                                SetAnnualExpenseDetail |
                                SetSelectedCategory |
-                               SetSelectedYear;
+                               SetSelectedYear |
+                               SetDataUpdateInProgress;
