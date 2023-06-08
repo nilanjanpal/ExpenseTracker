@@ -10,6 +10,7 @@ import { switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ExpenseAggregateDetail } from './../model/expense-aggregate-detail';
+import { InvestmentService } from './investment.service';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +37,8 @@ export class DashboardService {
 
   constructor(
     private store: Store<DashboardState>,
-    private http: HttpClient
+    private http: HttpClient,
+    private investmentService: InvestmentService
   ) {}
 
   initLoadData() {
@@ -116,6 +118,8 @@ export class DashboardService {
         this.store.dispatch(new dashboardActions.StopAnnualExpenseGraphLoading);
       }
     );
+
+    this.investmentService.setInsurances();
   }
 
   getTrendingExpenses():Observable<CategoryExpense[]> {
@@ -276,6 +280,7 @@ export class DashboardService {
   getAnnualExpenseDetail(): Observable<ExpenseDetail[]> {
     const date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
     const year = date.toLocaleString('en-US', {year: 'numeric'});
+
     return this.store.select(appReducer.getUserId)
     .pipe(
       switchMap(

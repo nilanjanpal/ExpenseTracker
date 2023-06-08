@@ -50,6 +50,12 @@ import { InvestmentRoutingModuleModule } from './child-route/investment-routing-
 import { InvestmentComponent } from './investment/investment.component';
 import { InvestmentHistoryComponent } from './investment/investment-history/investment-history.component';
 import { NewInvestmentComponent } from './investment/new-investment/new-investment.component';
+import { InsuranceHistoryComponent } from './investment/insurance/insurance-history/insurance-history.component';
+import { NewInsuranceComponent } from './investment/insurance/new-insurance/new-insurance.component';
+import { EquityHistoryComponent } from './investment/equity/equity-history/equity-history.component';
+import { NewEquityComponent } from './investment/equity/new-equity/new-equity.component';
+import { EquityComponent } from './investment/equity/equity.component';
+import { InvestmentEffect } from './effects/investmentEffects';
 
 @NgModule({
   declarations: [
@@ -78,7 +84,12 @@ import { NewInvestmentComponent } from './investment/new-investment/new-investme
     SmallDeviceVersionDirective,
     HighlightDirective,
     InvestmentHistoryComponent,
-    NewInvestmentComponent
+    NewInvestmentComponent,
+    InsuranceHistoryComponent,
+    NewInsuranceComponent,
+    EquityHistoryComponent,
+    NewEquityComponent,
+    EquityComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +99,7 @@ import { NewInvestmentComponent } from './investment/new-investment/new-investme
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot(AppReducer),
-    EffectsModule.forRoot(AuthEffect,UserEffect),
+    EffectsModule.forRoot(AuthEffect,UserEffect, InvestmentEffect),
     DashboardRoutingModule,
     ExpenseRoutingModule,
     ProfileRoutingModule,

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { InvestmentDetail } from 'src/app/model/investment-detail';
 
 @Component({
   selector: 'app-investment-history',

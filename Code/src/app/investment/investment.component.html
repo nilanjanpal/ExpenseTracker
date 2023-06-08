@@ -1,9 +1,16 @@
-<button mat-raised-button class="gradient-background white-font">Add New Investment</button>
-<mat-tab-group>
-    <mat-tab label="Equity"> Equity </mat-tab>
+<button mat-raised-button class="gradient-background white-font" (click)="addNew()">Add New Investment</button>
+<mat-tab-group #tab>
+    <mat-tab label="Equity">
+        <app-new-equity [newEquityEvent]="newEquity"></app-new-equity>
+        <app-equity></app-equity>
+    </mat-tab>
     <mat-tab label="Mutual Fund"> Mutual Fund </mat-tab>
     <mat-tab label="NPS"> NPS </mat-tab>
     <mat-tab label="PPF"> PPF </mat-tab>
-    <mat-tab label="Insurance"> Insurance </mat-tab>
+    <mat-tab label="Sovereign Bonds"> Sovereign Bonds </mat-tab>
+    <mat-tab label="Insurance">
+        <app-new-insurance [newInsuranceEvent]="newInsurance"></app-new-insurance>
+        <app-insurance-history></app-insurance-history>
+    </mat-tab>
 </mat-tab-group>
   

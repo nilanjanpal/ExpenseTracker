@@ -1,0 +1,45 @@
+<form [formGroup]="equityForm" *ngIf="isNewEquityActive">
+    <mat-card style="margin:10px">
+        <div class="flex-container">
+            <mat-form-field>
+                <mat-label>Enter stock name</mat-label>
+                <input matInput type="text" formControlName="stockName">
+                <mat-error>You must enter stock name</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Enter number of stocks</mat-label>
+                <input matInput type="number" formControlName="quantity">
+                <mat-error>You must enter number of stocks</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Enter price per stock</mat-label>
+                <input matInput type="number" formControlName="pricePerStock">
+                <mat-error>You must enter price per stock</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Enter brokerage and other charges</mat-label>
+                <input matInput type="number" formControlName="brokerageAndOtherCharges">
+                <mat-error>You must enter brokerage and other charges</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Transaction type</mat-label>
+                <mat-select formControlName="transactionType">
+                    <mat-option *ngFor="let element of transactionType" [value]="element">
+                    {{element}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label >Transaction Date</mat-label>
+                <input matInput formControlName="transactionDate" [matDatepicker]="transactionDatePicker">
+                <mat-datepicker-toggle matSuffix [for]="transactionDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #transactionDatePicker color="primary"></mat-datepicker>
+                <mat-error>You must enter date of transaction</mat-error>
+            </mat-form-field>
+        </div>
+        <mat-card-actions>
+            <button type="button" mat-raised-button class="gradient-background white-font" [disabled]="!this.equityForm.valid" (click)="saveEquity()">Save</button>
+            <button type="button" mat-raised-button (click)="reset()">Cancel</button>
+        </mat-card-actions>
+    </mat-card>
+</form>
