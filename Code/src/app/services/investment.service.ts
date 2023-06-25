@@ -64,6 +64,8 @@ export class InvestmentService {
     }
 
     saveEquity(equityDetail: EquityTransactionDetail) {
+        let startDate = new Date((new Date()).getFullYear(), (new Date()).getMonth(), 1);
+        let endDate = new Date((new Date()).getFullYear(), (new Date()).getMonth() + 1, 0);
         this.dashboardStore.select(appReducer.getUserId)
         .pipe(take(1))
         .subscribe(
@@ -73,7 +75,7 @@ export class InvestmentService {
                 .subscribe(
                     () => {
                         this.toastr.success('Success', 'Equity transaction added successfully');
-                        this.store.dispatch(new investmentActions.StartSetEquity(userId))
+                        this.store.dispatch(new investmentActions.StartSetEquity(userId, startDate, endDate))
                     }
                 );
             }
