@@ -47,6 +47,6 @@ db.EquityDetail.insertOne({stockName:"Bajaj Finance Pvt. Ltd.",stockPurchasePric
 db.EquityTransactionDetail.insertOne({stockName: "Bajaj Finance Pvt. Ltd.",pricePerStock: 6095,brokerageAndOtherCharges: 129.67,transactionType: "Buy",quantity: 3,transactionDate: ISODate("2023-03-03T18:30:00.000Z"),userId: ObjectId("64108bf67fe874384014263e")})
 
 
-
+db.EquityTransactiondeta
 
 

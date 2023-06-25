@@ -63,3 +63,7 @@ export const getInvestmentState = createFeatureSelector<InvestmentState>('invest
 export const getInsurance = createSelector(getInvestmentState, state => state.insurance);
 export const getEquity = createSelector(getInvestmentState, state => state.equity);
 export const getTransactionDetail = createSelector(getInvestmentState, state => state.equity.transactionDetail);
+export const getActiveEquityHoldings = createSelector(getInvestmentState, state => state.equity.activeEquities);
+export const getActiveEquityLoadingStatus = createSelector(getInvestmentState, state => state.activeEquityHoldingLoading);
+export const getRealizedGain = createSelector(getInvestmentState, state => state.equity.realizedGain);
+export const getRealizedGainLoadingStatus = createSelector(getInvestmentState, state => state.realizedGainLoading);

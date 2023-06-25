@@ -57,7 +57,6 @@ export class ProfileComponent implements OnInit, AfterContentInit {
   }
 
   onSubmit() {
-    console.log(this.userForm);
   }
 
 }

@@ -1,0 +1,13 @@
+<div *ngIf="!(isRealizedGainLoading$ | async)" class="flex-container">
+    <div *ngFor="let item of (realizedGain$ | async)" >
+        <mat-card style="width: 300px;">
+            <mat-card-header style="font-weight: 500;justify-content: center;">{{item.stockName}}</mat-card-header>
+            <mat-card-content>
+                <div>Avg. Buying Price - {{item.averageBuyingPrice | number:'1.2-2'}}</div>
+                <div>Avg. Selling Price - {{item.averageSellingPrice | number:'1.2-2'}}</div>
+                <div [ngStyle]="item.gainAmount > 0 ? {'color':'green'}:{'color':'red'}">Gain amount - {{item.gainAmount | number:'1.2-2'}}</div>
+                <div [ngStyle]="item.gainPercent > 0 ? {'color':'green'}:{'color':'red'}">Gain Percent - {{item.gainPercent | number:'1.2-2'}}%</div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

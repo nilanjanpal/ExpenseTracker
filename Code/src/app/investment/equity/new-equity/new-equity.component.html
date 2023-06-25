@@ -2,6 +2,11 @@
     <mat-card style="margin:10px">
         <div class="flex-container">
             <mat-form-field>
+                <mat-label>Enter symbol</mat-label>
+                <input matInput type="text" formControlName="symbol" (mouseleave)="onSymbolChange()">
+                <mat-error>You must enter stock symbol</mat-error>
+            </mat-form-field>
+            <mat-form-field>
                 <mat-label>Enter stock name</mat-label>
                 <input matInput type="text" formControlName="stockName">
                 <mat-error>You must enter stock name</mat-error>

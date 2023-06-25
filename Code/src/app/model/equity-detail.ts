@@ -7,16 +7,28 @@ export interface EquityTransactionDetail {
     brokerageAndOtherCharges: number;
     transactionType: string;
     quantity: number;
+    symbol: string;
+    exchange: string;
 }
 
-export interface EquityActive {
+export interface ActiveEquityHolding {
     stockName: string;
-    avgPricePerStock: number;
+    averageBuyingPrice: number;
     quantity: number;
-    holdingAmount: number;
+    totalHoldingAmount: number;
+    currentStockPrice: number;
+}
+
+export interface RealizedGain {
+    stockName: string;
+    averageBuyingPrice: number;
+    averageSellingPrice: number;
+    gainAmount: number;
+    gainPercent: number;
 }
 
 export interface EquityDetail {
-    activeEquities: EquityActive[],
-    transactionDetail: EquityTransactionDetail[]
+    activeEquities: ActiveEquityHolding[],
+    transactionDetail: EquityTransactionDetail[],
+    realizedGain: RealizedGain[]
 }

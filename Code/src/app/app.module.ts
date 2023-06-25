@@ -56,6 +56,8 @@ import { EquityHistoryComponent } from './investment/equity/equity-history/equit
 import { NewEquityComponent } from './investment/equity/new-equity/new-equity.component';
 import { EquityComponent } from './investment/equity/equity.component';
 import { InvestmentEffect } from './effects/investmentEffects';
+import { ActiveEquityComponent } from './investment/equity/active-equity/active-equity.component';
+import { RealizedGainComponent } from './investment/equity/realized-gain/realized-gain.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +91,9 @@ import { InvestmentEffect } from './effects/investmentEffects';
     NewInsuranceComponent,
     EquityHistoryComponent,
     NewEquityComponent,
-    EquityComponent
+    EquityComponent,
+    ActiveEquityComponent,
+    RealizedGainComponent
   ],
   imports: [
     BrowserModule,

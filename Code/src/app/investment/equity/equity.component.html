@@ -2,31 +2,55 @@
     <mat-toolbar-row class="toolbar">
         <button mat-button appHighlight (click)="onActive()">Active</button>
         <button mat-button appHighlight (click)="onTransactionHistory()">Transaction History</button>
-        <button mat-button appHighlight (click)="onProfitLoss()">Profit/Loss</button>
+        <button mat-button appHighlight (click)="onProfitLoss()">Realised Profit/Loss</button>
     </mat-toolbar-row>
-    <div *ngIf="activeTab==='Active'">Active</div>
+    <div *ngIf="activeTab==='Active'">
+        <div *ngIf="(activeEquityLoading$|async) === false" style=" display: flex; column-gap: 15px; flex-wrap: wrap; row-gap: 15px; justify-content: center;">
+            <div *ngFor="let equityItem of (activeEquityDetail$ | async)">
+                <app-active-equity [equityItem]="equityItem"></app-active-equity>
+            </div>
+        </div>
+    </div>
     <div *ngIf="activeTab==='Transaction History'">
+        <mat-card class="search-card">
+            <mat-form-field style="margin:10px">
+                <mat-label>Choose start date</mat-label>
+                <input matInput [matDatepicker]="startDatepicker" [(ngModel)]="startDate">
+                <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+                <mat-datepicker-toggle matIconSuffix [for]="startDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatepicker></mat-datepicker>
+            </mat-form-field>
+             <mat-form-field style="margin:10px">
+                <mat-label>Choose end date</mat-label>
+                <input matInput [matDatepicker]="endDatepicker" [(ngModel)]="endDate">
+                <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+                <mat-datepicker-toggle matIconSuffix [for]="endDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatepicker></mat-datepicker>
+            </mat-form-field>
+            <button mat-raised-button class="gradient-background white-font" (click)="onSearch()">Search</button>                            
+        </mat-card>
         <div *ngFor="let element of (equityDetail$ | async)">
             <mat-expansion-panel (opened)="panelOpenState = true"
                            (closed)="panelOpenState = false">
                 <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <span>{{element.stockName}}</span>  
+                    <span style="width: 300px;">{{element.stockName}}</span>  
                     <span [ngStyle]="{'color':element.transactionType==='Buy'?'green':'red'}">{{element.transactionType}}</span>
                 </mat-panel-title>
                 <mat-panel-description>
                     Transaction date - {{element.transactionDate | date:'dd-MM-yyyy'}}
                 </mat-panel-description>
                 </mat-expansion-panel-header>
-                    <span>Price (per stock) - {{element.pricePerStock}}</span>
-                    <span>Brokerage and Other Charges - {{element.brokerageAndOtherCharges}}</span>
+                    <span>Price (per stock) - {{element.pricePerStock | number: '1.2-2'}}</span>
+                    <span>Brokerage and Other Charges - {{element.brokerageAndOtherCharges | number: '1.2-2'}}</span>
                     <span>Number of stocks - {{element.quantity}}</span>
-                    <span>Gross amount - {{element.transactionType==='Buy'?(element.pricePerStock*element.quantity)+element.brokerageAndOtherCharges:(element.pricePerStock*element.quantity)-element.brokerageAndOtherCharges}}</span>
+                    <span>Gross amount - {{element.transactionType==='Buy'?(element.pricePerStock*element.quantity)+element.brokerageAndOtherCharges:(element.pricePerStock*element.quantity)-element.brokerageAndOtherCharges | number: '1.2-2'}}</span>
+                    <span>Symbol - {{element.symbol}}</span>
+                    <span>Exchange - {{element.exchange}}</span>
             </mat-expansion-panel>
         </div>
     </div>
-    <div *ngIf="activeTab==='Profit/Loss'">Profit/Loss</div>
-    <!-- <table mat-table *ngIf="activeTab==='Active'">Active</table>
-    <mat-table *ngIf="activeTab==='Transaction History'">Transaction History</mat-table>
-    <mat-table *ngIf="activeTab==='Profit/Loss'">Profit/Loss</mat-table> -->
+    <div *ngIf="activeTab==='Profit/Loss'">
+        <app-realized-gain></app-realized-gain>
+    </div>
 </div>
