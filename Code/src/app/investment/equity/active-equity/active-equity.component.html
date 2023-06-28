@@ -1,12 +1,22 @@
-<mat-card class="mat-elevation-z8">
-    <mat-card-header style="font-weight: 500; justify-content: center;">{{equityItem.stockName}}</mat-card-header>
-    <mat-card-content style="justify-content: center;">
-        <div>Quantity - {{equityItem.quantity}}</div>
-        <div>Avg. buying price - {{equityItem.averageBuyingPrice | number:'1.2-2'}}</div>
-        <div>Holding Amount - {{equityItem.totalHoldingAmount | number:'1.2-2'}}</div>
-        <div>Current Stock Price - {{equityItem.currentStockPrice | number: '1.2-2'}}</div>
-        <div *ngIf="equityItem.currentStockPrice > 0">Gain Amount - <span [ngStyle]="equityItem.currentStockPrice>equityItem.averageBuyingPrice?{'color':'green'}:{'color':'red'}">{{(equityItem.currentStockPrice - equityItem.averageBuyingPrice)*equityItem.quantity | number:'1.2-2'}}</span></div>
-        <div *ngIf="equityItem.currentStockPrice > 0">Gain Percent - <span [ngStyle]="equityItem.currentStockPrice>equityItem.averageBuyingPrice?{'color':'green'}:{'color':'red'}">{{((equityItem.currentStockPrice-equityItem.averageBuyingPrice)*100)/equityItem.averageBuyingPrice | number:'1.2-2'}}%</span></div>
-    </mat-card-content>
-</mat-card>
+<div>
+    <div *ngIf="(activeEquityLoading$|async)">
+        <app-loading></app-loading>
+    </div>
+    <div *ngIf="!(activeEquityLoading$|async)" style=" display: flex; column-gap: 15px; flex-wrap: wrap; row-gap: 15px; justify-content: center;">
+        <div *ngFor="let equityItem of (activeEquityDetail$ | async)">
+            <mat-card class="mat-elevation-z8">
+                <mat-card-header style="font-weight: 500; justify-content: center;">{{equityItem.stockName}}</mat-card-header>
+                <mat-card-content style="justify-content: center;">
+                    <div>Quantity - {{equityItem.quantity}}</div>
+                    <div>Avg. buying price - {{equityItem.averageBuyingPrice | number:'1.2-2'}}</div>
+                    <div>Holding Amount - {{equityItem.totalHoldingAmount | number:'1.2-2'}}</div>
+                    <div>Current Stock Price - {{equityItem.currentStockPrice | number: '1.2-2'}}</div>
+                    <div *ngIf="equityItem.currentStockPrice > 0">Gain Amount - <span [ngStyle]="equityItem.currentStockPrice>equityItem.averageBuyingPrice?{'color':'green'}:{'color':'red'}">{{(equityItem.currentStockPrice - equityItem.averageBuyingPrice)*equityItem.quantity | number:'1.2-2'}}</span></div>
+                    <div *ngIf="equityItem.currentStockPrice > 0">Gain Percent - <span [ngStyle]="equityItem.currentStockPrice>equityItem.averageBuyingPrice?{'color':'green'}:{'color':'red'}">{{((equityItem.currentStockPrice-equityItem.averageBuyingPrice)*100)/equityItem.averageBuyingPrice | number:'1.2-2'}}%</span></div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>
+
 
