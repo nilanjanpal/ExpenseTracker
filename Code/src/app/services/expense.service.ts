@@ -24,12 +24,14 @@ export class ExpenseService {
                 private toastr: ToastrService) { }
 
     saveExpenses(expenseItems): void {
-        let expenseHistory: ExpenseHistory[] = [];
+        let expenseHistory :ExpenseHistory[] = [];
         this.store.select(appReducer.getUserId).subscribe(
             userId => {
                 expenseItems.map(
                     item => {
-                        const expenseItem: ExpenseHistory = {
+                        item.purchaseDate.setHours(5);
+                        item.purchaseDate.setMinutes(30);
+                        const expenseItem:ExpenseHistory = {
                             id: null,
                             userId: userId,
                             itemName: item.itemName,
@@ -42,6 +44,7 @@ export class ExpenseService {
                         expenseHistory.push(expenseItem);
                     }
                 );
+                console.log(expenseHistory);
                 this.http.post(environment.url+"expenses",expenseHistory)
                 .pipe(take(1))
                 .subscribe(

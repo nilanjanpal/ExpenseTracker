@@ -1,1 +1,37 @@
-<p>equity-history works!</p>
+<mat-card class="search-card">
+    <mat-form-field style="margin:10px">
+        <mat-label>Choose start date</mat-label>
+        <input matInput [matDatepicker]="startDatepicker" [(ngModel)]="startDate">
+        <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+        <mat-datepicker-toggle matIconSuffix [for]="startDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatepicker></mat-datepicker>
+    </mat-form-field>
+     <mat-form-field style="margin:10px">
+        <mat-label>Choose end date</mat-label>
+        <input matInput [matDatepicker]="endDatepicker" [(ngModel)]="endDate">
+        <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+        <mat-datepicker-toggle matIconSuffix [for]="endDatepicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatepicker></mat-datepicker>
+    </mat-form-field>
+    <button mat-raised-button class="gradient-background white-font" (click)="onSearch()">Search</button>                            
+</mat-card>
+<div *ngFor="let element of (equityDetail$ | async)">
+    <mat-expansion-panel (opened)="panelOpenState = true"
+                   (closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+        <mat-panel-title>
+            <span style="width: 300px;">{{element.stockName}}</span>  
+            <span [ngStyle]="{'color':element.transactionType==='Buy'?'green':'red'}">{{element.transactionType}}</span>
+        </mat-panel-title>
+        <mat-panel-description>
+            Transaction date - {{element.transactionDate | date:'dd-MM-yyyy'}}
+        </mat-panel-description>
+        </mat-expansion-panel-header>
+            <span>Price (per stock) - {{element.pricePerStock | number: '1.2-2'}}</span>
+            <span>Brokerage and Other Charges - {{element.brokerageAndOtherCharges | number: '1.2-2'}}</span>
+            <span>Number of stocks - {{element.quantity}}</span>
+            <span>Gross amount - {{element.transactionType==='Buy'?(element.pricePerStock*element.quantity)+element.brokerageAndOtherCharges:(element.pricePerStock*element.quantity)-element.brokerageAndOtherCharges | number: '1.2-2'}}</span>
+            <span>Symbol - {{element.symbol}}</span>
+            <span>Exchange - {{element.exchange}}</span>
+    </mat-expansion-panel>
+</div>
